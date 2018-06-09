@@ -3,9 +3,7 @@ const EventEmitter = require('events');
 const { str2buf, buf2strs } = require('./str-buf');
 
 class JSONWebSocket extends EventEmitter {
-    constructor(url, encoding = 'utf8') {
-        this.encoding = encoding;
-
+    constructor(url) {
         var ws = this.ws = new WebSocket(url);
         ws.on('message', this.onMessage.bind(this));
         ['open', 'close', 'error'].forEach(eventName => {
