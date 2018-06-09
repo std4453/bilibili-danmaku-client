@@ -23,13 +23,15 @@
  *    02: Heartbeat sector.
  *    03: Heartbeat ACK sector.
  *    05: JSON data sector.
- *    07: Initializaiton sector.
+ *    07: Initialization sector.
  *    08. Initialization ACK sector.
  *
  * Since one frame can contain multiple sectors, during decoding the first 4 bytes
  * of the HEADER part is used to determint the length of each SECTOR, so that the next
  * SECTOR can be found where the previous one ends. During encoding, sectors are simply
  * concantenated.
+ *
+ * For more information about what each sector does, see sectors.js.
  *
  * @module biliDanmakuClient/encoding
  */

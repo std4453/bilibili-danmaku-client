@@ -1,3 +1,33 @@
+/**
+ * The sectors module.
+ * This module contains class definitions for all the sectors.
+ *
+ * There are currently 5 types of sectors:
+ * 1. Heartbeat sector.
+ * 2. Heartbeat ACK sector.
+ * 3. JSON data sector.
+ * 4. Initialization sector.
+ * 5. Initialization ACK sector.
+ *
+ * On establishment of WebSocket connection, the client sends an initialization sector,
+ * and the server responds with an initialization ACK sector. If an initialization sector
+ * was not send in the first 5 seconds, the connection will be closed.
+ * Then, every 30 seconds, the client sends a heartbeat sector, and the server
+ * responds with a heartbeat ACK sector.
+ * During the time the connection is open, the server will send JSON data sectors
+ * occasionlly, containing necessary data.
+ *
+ * It is designed that the classes in sectors.js do not know how and when these sectors
+ * are send and received, but only their logical definitions: What / what type of data they
+ * contain, and how should the data be encoded into binary code, that is, only the CONTENT
+ * part of the whole sector. Other work is left to encoding.js to do.
+ *
+ * To identify different types of sectors, only these classes should be used, and not any
+ * other string-ish representation.
+ *
+ * @module biliDanmakuClient/sectors
+ */
+
 const charset = 'utf8';
 
 /** Base class for all sector types */

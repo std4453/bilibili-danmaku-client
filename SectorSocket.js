@@ -6,7 +6,7 @@ const { encode, decode } = require('./encoding');
 /**
  * SectorSocket is a wrapper WebSocket transfering only Sectors, by conforming to the
  * internal protocols of the Bilibili Live Websocket Interface.
- * Sectors are defined in ./encoding.js.
+ * Sectors are defined in ./sectors.js.
  *
  * EVENTS
  * 'open': When this socket is opened.
