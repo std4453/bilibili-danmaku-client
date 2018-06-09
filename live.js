@@ -1,3 +1,4 @@
+const log = require('debug')('bili-danmaku-client:live')
 const JSONWebSocket = require('./JSONWebSocket');
 
 const DEBUG = true;
@@ -28,7 +29,7 @@ const connect = room => {
         });
         const heartbeat = setInterval(() => socket.sendStr(heartbeatMessage), heartbeatInterval);
 
-        if (DEBUG) socket.on('non-json', msg => console.log(`Non-JSON message received: ${msg}.`));
+        if (DEBUG) socket.on('non-json', msg => log(`Non-JSON message received: ${msg}.`));
         socket.on('close', (code, reason) => {
             clearInterval(heartbeat);
             resolve({ code: code, reason: reason });
@@ -45,8 +46,8 @@ const keepAlive = async room => {
     
     while(true) {
         const closeInfo = await connect(room);  // on Error exit keepAlive()
-        console.log(`connection to room ${room} closed: ${JSON.stringify(closeInfo)}.`);
-        console.log('Reconnecting after 5 seconds.');
+        log(`connection to room ${room} closed: ${JSON.stringify(closeInfo)}.`);
+        log('Reconnecting after 5 seconds.');
         await sleep();
     }
 };
