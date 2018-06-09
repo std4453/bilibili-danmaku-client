@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 const EventEmitter = require('events');
-const { str2buf, buf2strs } = require('./encoding');
+const { encode, decode } = require('./encoding');
 
 class JSONWebSocket extends EventEmitter {
     constructor(url) {
@@ -21,7 +21,7 @@ class JSONWebSocket extends EventEmitter {
     }
 
     onBuffer(buf) {
-        buf2strs(buf).forEach(str => {
+        decode(buf).forEach(str => {
             try {
                 this.emit('message', JSON.parse(str));
             } catch (e) {
@@ -32,7 +32,7 @@ class JSONWebSocket extends EventEmitter {
 
     // Sending
     sendStr(str, ...args) {
-        this.ws.send(str2buf(str), ...args);
+        this.ws.send(encode(str), ...args);
     }
 
     sendJSON(obj, ...args) {
