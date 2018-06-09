@@ -6,9 +6,9 @@ module.exports = {
     /**
      * Encode the given string into a Buffer.
      * The returned Buffer should be passed directly to WebSocket.send().
-     * 
+     *
      * Note that decode(encode(str))[0] === str should always be ture.
-     * 
+     *
      * @param {string} str The string to encode.
      * @returns {Buffer} The encoded Buffer.
      */
@@ -24,14 +24,14 @@ module.exports = {
      * into a string[] instead of a single string.
      * This method assumes that the input Buffer is valid. On invalid input, its
      * behavior is undefined.
-     * 
+     *
      * @param {Buffer} buf The Buffer to decode.
      * @returns {string[]} The decoded strings.
      */
     decode(buf) {
         const strs = [];
 
-        var offset = 0;
+        let offset = 0;
         while (offset < buf.length) {
             const segLen = buf.readInt32BE(offset);
             strs.push(buf.toString(encoding, offset + 16, offset + segLen));
@@ -43,5 +43,5 @@ module.exports = {
         }
 
         return strs;
-    }
-}
+    },
+};

@@ -4,11 +4,14 @@ const { encode, decode } = require('./encoding');
 
 class JSONWebSocket extends EventEmitter {
     constructor(url) {
-        var ws = this.ws = new WebSocket(url);
+        super();
+
+        const ws = new WebSocket(url);
+        this.ws = ws;
         ws.on('message', this.onMessage.bind(this));
-        ['open', 'close', 'error'].forEach(eventName => {
+        ['open', 'close', 'error'].forEach((eventName) => {
             ws.on(eventName, (...args) => this.emit(eventName, ...args));
-        })
+        });
     }
 
     // Event related
@@ -21,7 +24,7 @@ class JSONWebSocket extends EventEmitter {
     }
 
     onBuffer(buf) {
-        decode(buf).forEach(str => {
+        decode(buf).forEach((str) => {
             try {
                 this.emit('message', JSON.parse(str));
             } catch (e) {
