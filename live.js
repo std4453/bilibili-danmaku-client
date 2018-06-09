@@ -18,25 +18,29 @@ const processors = {};
 const on = (cmd, fn) => { processors[cmd] = fn; };
 
 const connect = room => new Promise((resolve, reject) => {
-    const socket = new JSONWebSocket(url);
+    // middlewares
+    const sendInitial = ws => ws.on('open', () => ws.sendJSON(getFirstMsg(room)));
+    const invokeProcessor = ws => ws.on('message', (msg) => {
+        if ('cmd' in msg && msg.cmd in processors) processors[msg.cmd](msg);
+    });
+    const heartbeat = (ws) => {
+        const handle = setInterval(() => ws.sendStr(heartbeatMessage), heartbeatInterval);
+        const clear = () => clearInterval(handle);
+        ws.on('close', clear);
+        ws.on('error', clear);
+    };
+    const nonJSON = ws => ws.on('non-json', msg => log(`Non-JSON message received: ${msg}.`));
+    const promisify = (ws) => {
+        ws.on('close', (code, reason) => resolve({ code, reason }));
+        ws.on('error', reject);
+    };
 
-    socket.on('open', () => socket.sendJSON(getFirstMsg(room)));
-    socket.on('message', (msg) => {
-        if ('cmd' in msg) {
-            if (msg.cmd in processors) processors[msg.cmd](msg);
-        }
-    });
-    const heartbeat = setInterval(() => socket.sendStr(heartbeatMessage), heartbeatInterval);
-
-    if (DEBUG) socket.on('non-json', msg => log(`Non-JSON message received: ${msg}.`));
-    socket.on('close', (code, reason) => {
-        clearInterval(heartbeat);
-        resolve({ code, reason });
-    });
-    socket.on('error', (error) => {
-        clearInterval(heartbeat);
-        reject(error);
-    });
+    const socket = new JSONWebSocket(url)
+        .use(sendInitial)
+        .use(invokeProcessor)
+        .use(heartbeat)
+        .use(promisify);
+    if (DEBUG) socket.use(nonJSON);
 });
 
 module.exports = {

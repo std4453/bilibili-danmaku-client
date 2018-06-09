@@ -14,6 +14,10 @@ class JSONWebSocket extends EventEmitter {
         });
     }
 
+    use(middleware) {
+        middleware(this, this.ws);
+    }
+
     // Event related
     onMessage(data) {
         if (data instanceof Buffer) this.onBuffer(data);
