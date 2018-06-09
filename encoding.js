@@ -36,6 +36,7 @@
 
 const isEqual = require('lodash.isequal');
 
+// eslint-disable-next-line object-curly-newline
 const { HeartbeatSector, HeartbeatAckSector, DataSector, InitSector, InitAckSector } = require('./sectors');
 
 /**
@@ -93,16 +94,11 @@ const decodeOne = (buf, offset) => {
     };
 
     // find type
-    let type;
-    for (const [key, value] of sector2meta) {
-        if (isEqual(value, metadata)) {
-            type = key;
-            break;
-        }
-    }
-    if (!(type instanceof Function)) {
+    const entry = Array.from(sector2meta.entries()).find(([, value]) => isEqual(value, metadata));
+    if (typeof entry === 'undefined') {
         throw new Error(`Unrecognized header: ${JSON.stringify(metadata)}`);
     }
+    const type = entry[0];
 
     // construct sector object
     return {
