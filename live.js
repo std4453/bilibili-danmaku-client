@@ -39,21 +39,7 @@ const connect = room => new Promise((resolve, reject) => {
     });
 });
 
-const keepAlive = async (room) => {
-    const sleep = time => new Promise(resolve => setTimeout(resolve, time));
-
-    /* eslint-disable no-await-in-loop */
-    while (true) {
-        const closeInfo = await connect(room); // on Error exit keepAlive()
-        log(`connection to room ${room} closed: ${JSON.stringify(closeInfo)}.`);
-        log('Reconnecting after 5 seconds.');
-        await sleep();
-    }
-    /* eslint-enable no-await-in-loop */
-};
-
 module.exports = {
     on,
     connect,
-    keepAlive,
 };
