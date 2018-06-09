@@ -75,6 +75,13 @@ class JSONWebSocket extends EventEmitter {
         }
     }
 
+    /**
+     * Send the given sectors, one by one.
+     * The sectors are first encoded into Buffers and then send by the WebSocket.
+     * For more details about the encoding process, see encoding.js
+     *
+     * @param {Sector[]} sectors The sectors to send.
+     */
     send(...sectors) {
         this.ws.send(encode(sectors));
     }
