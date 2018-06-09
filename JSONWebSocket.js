@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 const EventEmitter = require('events');
-const { str2buf, buf2strs } = require('./str-buf');
+const { str2buf, buf2strs } = require('./encoding');
 
 class JSONWebSocket extends EventEmitter {
     constructor(url) {
