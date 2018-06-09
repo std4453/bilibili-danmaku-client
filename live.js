@@ -23,13 +23,13 @@ const connect = room => new Promise((resolve, reject) => {
     const invokeProcessor = ws => ws.on('message', (msg) => {
         if ('cmd' in msg && msg.cmd in processors) processors[msg.cmd](msg);
     });
-    const heartbeat = (ws) => {
+    const sendHeartbeat = (ws) => {
         const handle = setInterval(() => ws.sendStr(heartbeatMessage), heartbeatInterval);
         const clear = () => clearInterval(handle);
         ws.on('close', clear);
         ws.on('error', clear);
     };
-    const nonJSON = ws => ws.on('non-json', msg => log(`Non-JSON message received: ${msg}.`));
+    const logNonJSON = ws => ws.on('non-json', msg => log(`Non-JSON message received: ${msg}.`));
     const promisify = (ws) => {
         ws.on('close', (code, reason) => resolve({ code, reason }));
         ws.on('error', reject);
@@ -38,9 +38,9 @@ const connect = room => new Promise((resolve, reject) => {
     const socket = new JSONWebSocket(url)
         .use(sendInitial)
         .use(invokeProcessor)
-        .use(heartbeat)
+        .use(sendHeartbeat)
         .use(promisify);
-    if (DEBUG) socket.use(nonJSON);
+    if (DEBUG) socket.use(logNonJSON);
 });
 
 module.exports = {
