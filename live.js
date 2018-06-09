@@ -1,4 +1,4 @@
-const JSONWebSocket = require('./JSONWebSocket');
+const SectorSocket = require('./SectorSocket');
 const { InitSector, DataSector, HeartbeatSector } = require('./sectors');
 
 const url = 'wss://broadcastlv.chat.bilibili.com:2245/sub';
@@ -33,7 +33,7 @@ const connect = room => new Promise((resolve, reject) => {
         ws.on('error', reject);
     };
 
-    new JSONWebSocket(url)
+    new SectorSocket(url)
         .use(sendInitial)
         .use(invokeProcessor)
         .use(sendHeartbeat)
