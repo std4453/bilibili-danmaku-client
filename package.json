@@ -16,6 +16,7 @@
   "dependencies": {
     "debug": "^3.1.0",
     "dotenv": "^6.0.0",
+    "lodash.isequal": "^4.5.0",
     "ws": "^5.2.0"
   },
   "devDependencies": {
