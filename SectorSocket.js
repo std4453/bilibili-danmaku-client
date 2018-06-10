@@ -1,5 +1,6 @@
 const WebSocket = require('ws');
 const EventEmitter = require('events');
+const ProxyAgent = require('proxy-agent');
 
 const { encode, decode } = require('./encoding');
 
@@ -27,7 +28,10 @@ class SectorSocket extends EventEmitter {
     constructor(url) {
         super();
 
-        const ws = new WebSocket(url);
+        const ws = new WebSocket(url, null, {
+            rejectUnauthorized: false,
+            agent: new ProxyAgent('http://127.0.0.1:8888'), // redirect to Fiddler
+        });
         this.ws = ws;
         ws.on('message', this.onMessage.bind(this));
         ['open', 'close', 'error'].forEach((eventName) => {
@@ -76,7 +80,7 @@ class SectorSocket extends EventEmitter {
      * @param {Sector[]} sectors The sectors to send.
      */
     send(...sectors) {
-        this.ws.send(encode(sectors));
+        this.ws.send(encode(...sectors));
     }
 
     /**

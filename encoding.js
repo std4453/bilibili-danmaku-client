@@ -63,13 +63,13 @@ const encodeOne = (sector) => {
     const metadata = sector2meta.get(Object.getPrototypeOf(sector).constructor);
 
     const header = Buffer.alloc(16);
-    header.writeInt32BE(content.len + 16, 0);
+    header.writeInt32BE(content.length + 16, 0);
     header[5] = 0x10;
     header[7] = metadata.control ? 0x01 : 0x00;
     header[11] = metadata.type;
     header[15] = metadata.control ? 0x01 : 0x00;
 
-    return Buffer.concat(header, content);
+    return Buffer.concat([header, content]);
 };
 
 /**
@@ -103,7 +103,7 @@ const decodeOne = (buf, offset) => {
 
     // construct sector object
     return {
-        sector: type.decode(type, Buffer.from(buf, offset + 16, len)),
+        sector: type.decode(type, buf.slice(offset + 16, offset + len + 16)),
         newOffset: offset + len + 16,
     };
 };

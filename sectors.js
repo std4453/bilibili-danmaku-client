@@ -54,7 +54,7 @@ Sector.decode = (Class, buf) => { throw new Error('Not implemented.'); }; // esl
 /** Base class for all JSON-based sector types */
 class JSONSector extends Sector {
     constructor(data) { super(); this.data = data; }
-    encode() { return Buffer.from(this.data, charset); }
+    encode() { return Buffer.from(JSON.stringify(this.data), charset); }
 }
 JSONSector.decode = (Class, buf) => new Class(JSON.parse(buf.toString(charset)));
 
@@ -78,7 +78,7 @@ class DataSector extends JSONSector {} // inherit constructor
 class InitSector extends JSONSector {} // inherit constructor
 
 class InitAckSector extends RawSector {
-    constructor() { super(Buffer.alloc(0)); }  // with empty CONTENT part
+    constructor() { super(Buffer.alloc(0)); } // with empty CONTENT part
 }
 
 module.exports = {

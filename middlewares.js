@@ -69,11 +69,13 @@ class Middleware {
 }
 
 const sendInitial = new Middleware(
-    (ws, conf) => ws.on('open', () => ws.send(new InitSector({
-        ...conf.initial,
-        uid: conf.uid,
-        room: conf.room,
-    }))), {
+    (ws, conf) => ws.on('open', () => {
+        ws.send(new InitSector({
+            ...conf.initial,
+            uid: conf.uid,
+            roomid: conf.room,
+        }));
+    }), {
         initial: {
             protover: 1,
             platform: 'web',

@@ -4,7 +4,8 @@ const DanmakuClient = require('./DanmakuClient');
 
 const run = () => new Promise((resolve) => {
     const client = new DanmakuClient({
-        room: 1,
+        room: 5440,
+        keepAlive: { enabled: false },
     });
     client.start();
     client.on('stateChange', (newState) => {

@@ -59,6 +59,7 @@ const manageLifecycle = new Middleware(
 
         const closeAction = conf.keepAlive.enabled ? () => {
             if (!checkTerminate()) return;
+            if (client.state === 'reconnecting') return;
 
             const reconnStr = conf.keepAlive.reconnectInterval.toFixed(0);
             log(`Connection to ${conf.url} closed / got an error while in keepAlive mode, therefore DanmakuClient will auto-reconnect after ${reconnStr} seconds.`);
@@ -109,7 +110,8 @@ class DanmakuClient extends EventEmitter {
      */
     connect() {
         const socket = new SectorSocket(this.conf.url);
-        [...this.conf.middlewares, manageLifecycle].forEach(socket.use.bind(socket));
+        [...this.conf.middlewares, manageLifecycle]
+            .forEach(middleware => middleware.config(socket, this.conf, this));
     }
 
     /**
