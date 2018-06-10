@@ -88,8 +88,8 @@ const invokeTransformer = new Middleware(
             if (!(sector instanceof DataSector)) return;
             const msg = sector.data;
             if (!('cmd' in msg) || !(msg.cmd in conf.transformers)) return;
-            const { name, event } = conf.transformers[msg.cmd](msg);
-            client.emit(name, event);
+            const transformer = conf.transformers[msg.cmd];
+            client.emit(transformer.name, transformer.transform(msg));
         });
     }, {
         transformers: all,
@@ -128,7 +128,7 @@ const logLifecycle = new Middleware(
     },
 );
 
-const middlewares = { 
+const middlewares = {
     sendInitial,
     invokeTransformer,
     sendHeartbeat,

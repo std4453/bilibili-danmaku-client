@@ -105,17 +105,29 @@ const welcomeGuard = compile(on(m => m.data, {
 }));
 
 // transformer
-const asTransformer = (name, fn) => input => ({ name, event: fn(input) });
+class Transformer {
+    constructor(name, fn) {
+        this.name = name;
+        this.fn = fn;
+    }
+
+    transform(input) {
+        return this.fn(input);
+    }
+}
+
 const transformers = {
-    DANMU_MSG: asTransformer('danmaku', danmuMsg),
-    SYS_MSG: asTransformer('sysMsg', sysMsg),
-    SEND_GIFT: asTransformer('gift', sendGift),
-    ROOM_RANK: asTransformer('roomRank', roomRank),
-    WELCOME: asTransformer('vipEnter', welcome),
-    WELCOME_GUARD: asTransformer('guardEnter', welcomeGuard),
+    DANMU_MSG: new Transformer('danmaku', danmuMsg),
+    SYS_MSG: new Transformer('sysMsg', sysMsg),
+    SEND_GIFT: new Transformer('gift', sendGift),
+    ROOM_RANK: new Transformer('roomRank', roomRank),
+    WELCOME: new Transformer('vipEnter', welcome),
+    WELCOME_GUARD: new Transformer('guardEnter', welcomeGuard),
 };
 
 module.exports = {
+    Transformer,
     ...transformers,
+    events: Object.keys(transformers).map(key => transformers[key].name),
     all: transformers,
 };
