@@ -78,6 +78,16 @@ class SectorSocket extends EventEmitter {
     send(...sectors) {
         this.ws.send(encode(sectors));
     }
+
+    /**
+     * Terminate the socket.
+     * Note that an 'close' event will be emitted after terminate().
+     * Behavior of calling other methods on the SectorSocket instance after terminate is
+     * undefined and should be avoided.
+     */
+    terminate() {
+        this.ws.terminate();
+    }
 }
 
 module.exports = SectorSocket;
