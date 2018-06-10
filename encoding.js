@@ -38,7 +38,6 @@
 
 const isEqual = require('lodash.isequal');
 
-// eslint-disable-next-line object-curly-newline
 const { HeartbeatSector, HeartbeatAckSector, DataSector, InitSector, InitAckSector } = require('./sectors');
 
 /**

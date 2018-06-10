@@ -3,6 +3,7 @@
     "rules": {
         "indent": ["error", 4],
         "linebreak-style": ["error", "windows"],
-        "function-paren-newline": "off"
+        "function-paren-newline": "off",
+        "object-curly-newline": "off"
     }
 }
