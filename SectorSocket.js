@@ -28,10 +28,9 @@ class SectorSocket extends EventEmitter {
     constructor(url) {
         super();
 
-        const ws = new WebSocket(url, null, {
-            rejectUnauthorized: false,
-            agent: new ProxyAgent('http://127.0.0.1:8888'), // redirect to Fiddler
-        });
+        const options = { rejectUnauthorized: false };
+        if (process.env.http_proxy) options.agent = new ProxyAgent(process.env.http_proxy);
+        const ws = new WebSocket(url, null, options);
         this.ws = ws;
         ws.on('message', this.onMessage.bind(this));
         ['open', 'close', 'error'].forEach((eventName) => {
