@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const DanmakuClient = require('./DanmakuClient');
+const DanmakuClient = require('./src/DanmakuClient');
 
 const run = () => new Promise((resolve) => {
     const client = new DanmakuClient({
