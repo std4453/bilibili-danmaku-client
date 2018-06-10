@@ -21,6 +21,7 @@ const defaultsDeep = require('lodash.defaultsdeep');
 const log = require('debug')('biliDanmakuClient/middlewares');
 
 const { InitSector, InitAckSector, HeartbeatSector, DataSector } = require('./sectors');
+const { all } = require('./transformers');
 
 /**
  * Middleware are used to config the SectorSocket and the DanmakuClient instance.
@@ -87,11 +88,11 @@ const invokeTransformer = new Middleware(
             if (!(sector instanceof DataSector)) return;
             const msg = sector.data;
             if (!('cmd' in msg) || !(msg.cmd in conf.transformers)) return;
-            const transformed = conf.transformers[msg.cmd];
-            client.emit(transformed.name, transformed.event);
+            const { name, event } = conf.transformers[msg.cmd](msg);
+            client.emit(name, event);
         });
     }, {
-        transformers: {},
+        transformers: all,
     },
 );
 
