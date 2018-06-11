@@ -18,7 +18,7 @@
  */
 
 const defaultsDeep = require('lodash.defaultsdeep');
-const log = require('debug')('biliDanmakuClient/middlewares');
+const log = require('debug')('bili-danmaku-dlient/middlewares');
 
 const { InitSector, InitAckSector, HeartbeatSector, DataSector } = require('./sectors');
 const { all } = require('./transformers');
