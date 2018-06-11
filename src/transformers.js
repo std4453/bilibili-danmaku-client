@@ -5,7 +5,7 @@ const map = (obj, fn) => {
     return mapped;
 };
 const compile = (src) => {
-    if (typeof src === 'function') return input => src(input);
+    if (typeof src === 'function') return src;
     else if (src instanceof Array) {
         const compiled = src.map(compile);
         return input => compiled.map(transformer => transformer(input));
@@ -20,35 +20,40 @@ const compile = (src) => {
 const asFlag = input => !!input;
 const onWhen = (mapper, predicate, src) => {
     const compiled = compile(src);
-    return input => (predicate(input) ? compiled(mapper(input)) : null);
+    return input => (predicate(mapper(input)) ? compiled(mapper(input)) : null);
 };
 const on = (mapper, src) => onWhen(mapper, () => true, src);
-const onExist = (mapper, src) => {
-    const predicate = (input) => {
-        if (typeof input === 'undefined' || input === null) return false;
-        if (input instanceof Array) return input.length !== 0;
-        if (typeof input === 'object') return Object.keys(input) !== 0;
-        return false;
-    };
-    return onWhen(mapper, predicate, src);
+const exists = (input) => {
+    if (typeof input === 'undefined' || input === null) return false;
+    if (input instanceof Array) return input.length !== 0;
+    if (typeof input === 'object') return Object.keys(input).length !== 0;
+    return false;
 };
+const onExist = (mapper, src) => onWhen(mapper, exists, src);
 const convertNames = (...names) => names
-    .filter(name => typeof name === 'string' || name instanceof Array)
     .map((nameOrArr) => {
-        if (nameOrArr instanceof Array) {
+        if (nameOrArr instanceof Array && nameOrArr.length >= 2) {
             const [name, fn] = nameOrArr;
+            if (!(typeof name === 'string') || !(fn instanceof Function)) return null;
             return { name, fn };
-        }
-        return { name: nameOrArr, fn: n => n };
+        } else if (typeof nameOrArr === 'string') return { name: nameOrArr, fn: n => n };
+        return null;
     });
 const spread = (...names) => {
     const src = {};
-    convertNames(names).forEach(({ name, fn }, index) => { src[name] = a => fn(a[index]); });
+    convertNames(...names).forEach((converted, index) => {
+        if (converted === null) return;
+        const { name, fn } = converted;
+        src[name] = a => fn(a[index]);
+    });
     return src;
 };
 const spreadObj = (...names) => {
     const src = {};
-    convertNames(names).forEach(({ name, fn }) => { src[name] = o => fn(o[name]); });
+    convertNames(...names)
+        .filter(converted => converted !== null)
+        .forEach(({ name, fn }) => { src[name] = o => fn(o[name]); });
+    return src;
 };
 
 // definitions
@@ -79,11 +84,7 @@ const parseTopUser = compile({
 const sendGift = compile(on(m => m.data, {
     ...spreadObj('giftName', 'giftId', 'num', 'price', 'action', 'timestamp'),
     sender: userSrc,
-    topList: on(d => d.top_list, spread(
-        ['first', parseTopUser],
-        ['second', parseTopUser],
-        ['third', parseTopUser],
-    )),
+    topList: on(d => d.top_list, [parseTopUser, parseTopUser, parseTopUser]),
     coinType: d => d.coin_type,
     totalCoin: d => d.total_coin,
 }));
@@ -130,7 +131,7 @@ const transformers = {
 
 module.exports = {
     _private: { // for testing
-        map, compile, asFlag, onWhen, convertNames, spread, spreadObj,
+        map, compile, asFlag, onWhen, on, exists, onExist, convertNames, spread, spreadObj,
     },
 
     Transformer,
