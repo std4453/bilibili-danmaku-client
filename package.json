@@ -1,7 +1,7 @@
 {
   "name": "@std4453/bilibili-danmaku-client-site",
   "version": "0.0.1",
-  "description": "The website for bilibili-danmaku-client",
+  "description": "The website for @std4453/bilibili-danmaku-client",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
