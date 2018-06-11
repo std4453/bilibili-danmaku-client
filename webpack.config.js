@@ -7,17 +7,6 @@ module.exports = {
                 test: /\.js$/,
                 include: [path.resolve(__dirname, 'src')],
                 loader: ['babel-loader', 'eslint-loader'],
-
-                options: {
-                    presets: [
-                        'env',
-                        {
-                            modules: false,
-                        },
-                    ],
-
-                    plugins: ['syntax-dynamic-import'],
-                },
             },
         ],
     },
