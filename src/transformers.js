@@ -60,16 +60,19 @@ const spreadObj = (...names) => {
 const danmuMsg = compile(on(m => m.info, {
     timestamp: i => i[0][4],
     content: i => i[1],
-    sender: on(i => i[2], spread('uid', 'name', null, ['isVip', asFlag], ['isSvip', asFlag])),
+    sender: on(i => i[2], spread('uid', 'name', ['isOwner', asFlag], ['isVip', asFlag], ['isSvip', asFlag])),
     badge: onExist(i => i[3], spread('level', 'name', 'owner', 'roomId')),
-    level: on(i => i[4], spread('ul', null, null, 'ranking')),
+    ul: on(i => i[4], {
+        ranking: u => u[3],
+        level: u => u[0],
+    }),
     medal: onExist(i => i[5], spread('first', 'second')),
     unameColor: i => i[8].uname_color,
 }));
 const sysMsg = compile({
     ...spreadObj('msg', 'rep', 'styleType', 'url'),
     msgText: m => m.msg_text,
-    realRoomId: m => m.read_roomid,
+    realRoomId: m => m.real_roomid,
     roomId: m => m.roomid,
 });
 const userSrc = {
