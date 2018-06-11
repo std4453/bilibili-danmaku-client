@@ -6,7 +6,10 @@ const map = (obj, fn) => {
 };
 const compile = (src) => {
     if (typeof src === 'function') return input => src(input);
-    else if (typeof src === 'object') {
+    else if (src instanceof Array) {
+        const compiled = src.map(compile);
+        return input => compiled.map(transformer => transformer(input));
+    } else if (typeof src === 'object') {
         const compiled = map(src, compile);
         return input => map(compiled, transformer => transformer(input));
     }
@@ -126,6 +129,10 @@ const transformers = {
 };
 
 module.exports = {
+    _private: { // for testing
+        map, compile, asFlag, onWhen, convertNames, spread, spreadObj,
+    },
+
     Transformer,
     ...transformers,
     events: Object.keys(transformers).map(key => transformers[key].name),
