@@ -5,19 +5,19 @@ const log = require('debug')('bili-danmaku-client');
 const DanmakuClient = require('./src/DanmakuClient');
 const { events } = require('./src/transformers');
 
-const run = () => new Promise((resolve) => {
-    const client = new DanmakuClient({
-        room: 5440,
-        keepAlive: { enabled: false },
-    });
-    client.start();
-    client.on('stateChange', (newState) => {
-        if (newState === 'terminated') resolve();
-    });
-
-    events.forEach(event => client.on(event, data => log(data)));
+const client = new DanmakuClient({
+    room: parseInt(process.env.room, 10),
+    keepAlive: { enabled: !!process.env.keepAlive },
 });
+client.start();
+events.forEach(event => client.on(event, data => log(data)));
+log('Client starting, press CTRL+C to terminate.');
 
-(async () => {
-    await run();
-})();
+process.on('SIGINT', () => client.terminate());
+process.on('SIGTERM', () => client.terminate());
+client.on('stateChange', (newState) => {
+    if (newState === 'terminated') {
+        log('Danmaku client terminated.');
+        process.exit(0);
+    }
+});
