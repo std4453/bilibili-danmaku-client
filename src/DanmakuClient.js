@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
 const defaultsDeep = require('lodash.defaultsdeep');
-const log = require('debug')('bili-danmaku-client/client');
+const log = require('debug')('bilibili-danmaku-client/client');
 
 const SectorSocket = require('./SectorSocket');
 const { Middleware, all } = require('./middlewares');

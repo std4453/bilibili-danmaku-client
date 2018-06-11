@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const log = require('debug')('bili-danmaku-client');
+const log = require('debug')('bilibili-danmaku-client');
 
 const DanmakuClient = require('./src/DanmakuClient');
 const { events } = require('./src/transformers');
