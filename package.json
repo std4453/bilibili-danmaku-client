@@ -1,0 +1,19 @@
+{
+  "name": "@std4453/bilibili-danmaku-client-site",
+  "version": "0.0.1",
+  "description": "The website for bilibili-danmaku-client",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/std4453/bilibili-danmaku-client.git"
+  },
+  "author": "std4453",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/std4453/bilibili-danmaku-client/issues"
+  },
+  "homepage": "https://github.com/std4453/bilibili-danmaku-client#readme"
+}
