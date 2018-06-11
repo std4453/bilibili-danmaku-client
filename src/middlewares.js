@@ -89,12 +89,18 @@ const invokeTransformer = new Middleware(
         ws.on('sector', (sector) => {
             if (!(sector instanceof DataSector)) return;
             const msg = sector.data;
-            if (!('cmd' in msg) || !(msg.cmd in conf.transformers)) return;
-            const transformer = conf.transformers[msg.cmd];
-            client.emit(transformer.name, transformer.transform(msg));
+            if (!('cmd' in msg)) return;
+            if (msg.cmd in conf.transformers) {
+                const transformer = conf.transformers[msg.cmd];
+                client.emit(transformer.name, transformer.transform(msg));
+            } else {
+                log('Untransformed data sector:');
+                log(msg);
+            }
         });
     }, {
         transformers: all,
+        logUntransformed: true,
     },
 );
 
