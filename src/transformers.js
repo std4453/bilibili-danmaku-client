@@ -67,7 +67,6 @@ const danmuMsg = compile(on(m => m.info, {
         level: u => u[0],
     }),
     medal: onExist(i => i[5], spread('first', 'second')),
-    unameColor: i => i[8].uname_color,
 }));
 const sysMsg = compile({
     ...spreadObj('msg', 'rep', 'styleType', 'url'),
@@ -85,8 +84,9 @@ const parseTopUser = compile({
     ...spreadObj('rank', 'score', ['isSelf', asFlag]),
 });
 const sendGift = compile(on(m => m.data, {
-    ...spreadObj('giftName', 'giftId', 'num', 'price', 'action', 'timestamp'),
+    ...spreadObj('giftName', 'giftId', 'giftType', 'num', 'remain', 'price', 'action', 'timestamp'),
     sender: userSrc,
+    left: onWhen(m => m, m => m.gold > 0 && m.silver > 0, spreadObj('gold', 'silver')),
     topList: on(d => d.top_list, [
         on(l => l[0], parseTopUser),
         on(l => l[1], parseTopUser),
@@ -94,6 +94,8 @@ const sendGift = compile(on(m => m.data, {
     ]),
     coinType: d => d.coin_type,
     totalCoin: d => d.total_coin,
+    superGiftNum: d => d.super_gift_num,
+    effectBlock: d => d.effect_block,
 }));
 const roomRank = compile(on(m => m.data, {
     ...spreadObj('timestamp', 'color'),
@@ -113,6 +115,16 @@ const welcomeGuard = compile(on(m => m.data, {
     uid: d => d.uid,
     name: d => d.username,
     guardLevel: d => d.guard_level,
+}));
+const comboEnd = compile(on(m => m.data, {
+    price: d => d.price,
+    gitId: d => d.gift_id,
+    giftName: d => d.gift_name,
+    comboNum: d => d.combo_num,
+    name: d => d.uname, // sender name
+    owner: d => d.r_uname, // name of room owner
+    startTime: d => d.start_time,
+    endTime: d => d.end_time,
 }));
 
 // transformer
@@ -134,6 +146,7 @@ const transformers = {
     ROOM_RANK: new Transformer('roomRank', roomRank),
     WELCOME: new Transformer('vipEnter', welcome),
     WELCOME_GUARD: new Transformer('guardEnter', welcomeGuard),
+    COMBO_END: new Transformer('comboEnd', comboEnd),
 };
 
 module.exports = {
