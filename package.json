@@ -1,7 +1,7 @@
 {
-  "name": "bili-danmaku-client",
+  "name": "bilibili-danmaku-client",
   "version": "0.1.0",
-  "description": "A Node.js client for the Bilibili Live Danmaku interface",
+  "description": "A Node.js client for the Bilibili Live Danmaku Interface",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
