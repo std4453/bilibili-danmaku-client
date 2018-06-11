@@ -13,6 +13,10 @@
     "websocket"
   ],
   "author": "std4453",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/std4453/bilibili-danmaku-client"
+  },
   "license": "MIT",
   "dependencies": {
     "debug": "^3.1.0",
