@@ -11,10 +11,15 @@
     "bilibili",
     "websocket"
   ],
-  "author": "std4453",
+  "author": "std4453 <me@std4453.com> (https://std4453.com)",
+  "homepage": "https://std4453.github.io/bilibil-danmaku-client",
   "repository": {
     "type": "git",
     "url": "https://github.com/std4453/bilibili-danmaku-client"
+  },
+  "bugs": {
+    "url": "https://github.com/std4453/bilibili-danmaku-client/issues",
+    "email": "me@std4453.com"
   },
   "license": "MIT",
   "dependencies": {
