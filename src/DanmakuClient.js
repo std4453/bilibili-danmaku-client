@@ -140,16 +140,17 @@ class DanmakuClient extends EventEmitter {
     /**
      * Set the current state of this DanmakuClient.
      * States MUST be switched using this method, except in the constructor. setState()
-     * sets the state and emits the 'stateChange' event so that applications can
-     * listen to the lifecycle changes of the client.
+     * sets the state and emits an event with the name being the new state so that
+     * applications can listen to the lifecycle changes of the client.
      * This is an internal method.
      *
      * @param {string} state The state to switch to.
      */
     setState(state) {
-        const oldState = this.state;
-        this.state = state;
-        if (oldState !== state) this.emit('stateChange', state, oldState);
+        if (this.state !== state) {
+            this.state = state;
+            this.emit(state);
+        }
     }
 }
 

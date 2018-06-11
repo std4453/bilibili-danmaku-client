@@ -15,9 +15,7 @@ log('Client starting, press CTRL+C to terminate.');
 
 process.on('SIGINT', () => client.terminate());
 process.on('SIGTERM', () => client.terminate());
-client.on('stateChange', (newState) => {
-    if (newState === 'terminated') {
-        log('Danmaku client terminated.');
-        process.exit(0);
-    }
+client.on('terminated', () => {
+    log('Danmaku client terminated.');
+    process.exit(0);
 });
