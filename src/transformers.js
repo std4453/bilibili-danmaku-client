@@ -84,7 +84,11 @@ const parseTopUser = compile({
 const sendGift = compile(on(m => m.data, {
     ...spreadObj('giftName', 'giftId', 'num', 'price', 'action', 'timestamp'),
     sender: userSrc,
-    topList: on(d => d.top_list, [parseTopUser, parseTopUser, parseTopUser]),
+    topList: on(d => d.top_list, [
+        on(l => l[0], parseTopUser),
+        on(l => l[1], parseTopUser),
+        on(l => l[2], parseTopUser),
+    ]),
     coinType: d => d.coin_type,
     totalCoin: d => d.total_coin,
 }));
