@@ -1,6 +1,5 @@
 const WebSocket = require('ws');
 const EventEmitter = require('events');
-const ProxyAgent = require('proxy-agent');
 
 const { encode, decode } = require('./encoding');
 
@@ -18,18 +17,20 @@ const { encode, decode } = require('./encoding');
 class SectorSocket extends EventEmitter {
     /**
      * Construct a new SectorSocket object, connecting to the given url.
+     * The 'options' parameter is used to enable customization of the WebSocket connection,
+     * like setting the proxy, adding headers, etc.. For more details, see documentation
+     * of ws.
      * Note that the WebSocket will be opening after this constructor returns, however, due
      * to the single-thread nature of Javascript, it is still possible to add middlewares
      * with use.
      *
      * @param {string} url The url to connect to.
+     * @param {*} options The options used to customize the WebSocket connection, optional.
      * @see use
      */
-    constructor(url) {
+    constructor(url, options = {}) {
         super();
 
-        const options = { rejectUnauthorized: false };
-        if (process.env.http_proxy) options.agent = new ProxyAgent(process.env.http_proxy);
         const ws = new WebSocket(url, null, options);
         this.ws = ws;
         ws.on('message', this.onMessage.bind(this));

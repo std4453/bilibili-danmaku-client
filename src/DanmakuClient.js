@@ -83,8 +83,9 @@ const manageLifecycle = new Middleware(
 const defaultConf = {
     url: 'wss://broadcastlv.chat.bilibili.com:2245/sub',
     room: 1,
-    uid: 0,
-    middlewares: all,
+    uid: 0, // without a user
+    middlewares: all, // use all middlwares
+    options: { rejectUnauthorized: false }, // avoid unauthorized error
 };
 
 class DanmakuClient extends EventEmitter {
@@ -109,7 +110,7 @@ class DanmakuClient extends EventEmitter {
      * For details of how this methods works, see documentation of manageLifecycle.
      */
     connect() {
-        const socket = new SectorSocket(this.conf.url);
+        const socket = new SectorSocket(this.conf.url, this.conf.options);
         [...this.conf.middlewares, manageLifecycle]
             .forEach(middleware => middleware.config(socket, this.conf, this));
     }

@@ -57,6 +57,8 @@ class Middleware {
      *     url: The url that the SectorSocket is connecting to.
      *     room: The room that the SectorSocket is watching.
      *     uid: The contextual user id. 0 if not specified.
+     *     options: The options object passed into constructor of Websocket, to support
+     *              customization of the connection.
      *
      * @param {SectorSocket} ws The SectorSocket instance.
      * @param {*} conf The raw config object.
