@@ -1,6 +1,6 @@
 {
   "name": "bilibili-danmaku-client",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "A Node.js client for the Bilibili Live Danmaku Interface",
   "main": "src/index.js",
   "scripts": {
