@@ -5,5 +5,8 @@
         "linebreak-style": ["error", "windows"],
         "function-paren-newline": "off",
         "object-curly-newline": "off"
+    },
+    "env": {
+        "browser": true
     }
 }
