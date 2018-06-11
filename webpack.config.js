@@ -1,31 +1,25 @@
 const path = require('path');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
+    entry: './src/index.js',
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'bundle.js',
+    },
     module: {
         rules: [
             {
                 test: /\.js$/,
-                include: [path.resolve(__dirname, 'src')],
                 loader: ['babel-loader', 'eslint-loader'],
             },
         ],
     },
+    plugins: [
+        new CleanWebpackPlugin(['dist']),
+    ],
+    devtool: 'source-map',
+    target: 'web',
 
     mode: 'development',
-
-    optimization: {
-        splitChunks: {
-            chunks: 'async',
-            minSize: 30000,
-            minChunks: 1,
-            name: false,
-
-            cacheGroups: {
-                vendors: {
-                    test: /[\\/]node_modules[\\/]/,
-                    priority: -10,
-                },
-            },
-        },
-    },
 };
