@@ -30,6 +30,7 @@
     "ajv": "^6.5.1",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "clean-webpack-plugin": "^0.1.19",
     "eslint": "^4.19.1",
