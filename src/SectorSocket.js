@@ -1,4 +1,4 @@
-const WebSocket = require('ws');
+const WebSocket = require('x-platform-ws');
 const EventEmitter = require('events');
 
 const { encode, decode } = require('./encoding');

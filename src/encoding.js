@@ -36,6 +36,7 @@
  * @module biliDanmakuClient/encoding
  */
 
+const { Buffer } = require('buffer');
 const isEqual = require('lodash.isequal');
 
 const { HeartbeatSector, HeartbeatAckSector, DataSector, InitSector, InitAckSector } = require('./sectors');

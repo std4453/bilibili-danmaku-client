@@ -28,6 +28,8 @@
  * @module biliDanmakuClient/sectors
  */
 
+const { Buffer } = require('buffer');
+
 const charset = 'utf8';
 
 /** Base class for all sector types */
