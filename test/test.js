@@ -10,7 +10,7 @@ const {
     convertNames,
     spread,
     spreadObj,
-} = require('../src/transformers')._private; // eslint-disable-line no-underscore-dangle
+} = require('../src/definition')._private; // eslint-disable-line no-underscore-dangle
 
 describe('transformers', () => {
     describe('compile', () => {
