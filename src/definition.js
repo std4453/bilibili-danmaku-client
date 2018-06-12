@@ -1,12 +1,12 @@
-const { map, mapValues, isEmpty, negate, isString, isFunction, isArray, fromPairs, conformsTo, defaults, camelCase } = require('lodash');
+const { map, mapValues, isEmpty, negate, isString, isFunction, isArray, isObject, fromPairs, conformsTo, defaults, camelCase } = require('lodash');
 
 // compiler
 const compile = (src) => {
     if (typeof src === 'function') return src;
-    else if (src instanceof Array) {
+    else if (isArray(src)) {
         const compiled = map(src, compile);
         return input => map(compiled, transformer => transformer(input));
-    } else if (typeof src === 'object') {
+    } else if (isObject(src)) {
         const compiled = mapValues(src, compile);
         return input => mapValues(compiled, transformer => transformer(input));
     }
@@ -32,24 +32,11 @@ const convertNames = (...names) => names
     });
 const spread = (...names) => fromPairs(convertNames(...names)
     .map((converted, index) => {
-        if (isEmpty(converted)) return undefined;
+        if (!isObject(converted)) return undefined;
         const { name, mapVal, mapKey } = converted;
         return [mapKey(name), a => mapVal(a[index])];
-    }).filter(negate(isEmpty)));
+    }).filter(isArray));
 const spreadObj = (...names) => fromPairs(convertNames(...names)
-    .filter(negate(isEmpty))
-    .map(({ name, mapVal, mapKey }) => [mapKey(name), o => mapVal(o[name])]));
+    .filter(isObject).map(({ name, mapVal, mapKey }) => [mapKey(name), o => mapVal(o[name])]));
 
-module.exports = {
-    _private: { // for testing
-        compile, asFlag, onWhen, on, onExist, convertNames, spread, spreadObj,
-    },
-
-    compile,
-    asFlag,
-    onWhen,
-    on,
-    onExist,
-    spread,
-    spreadObj,
-};
+module.exports = { compile, asFlag, onWhen, on, onExist, convertNames, spread, spreadObj };

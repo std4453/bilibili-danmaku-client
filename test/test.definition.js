@@ -1,16 +1,8 @@
-/* global describe it */
-const { toString, negate, isEmpty } = require('lodash');
+const { describe, it } = require('mocha');
 const assert = require('assert');
+const { toString, isObject } = require('lodash');
 
-const {
-    compile,
-    asFlag,
-    on,
-    onExist,
-    convertNames,
-    spread,
-    spreadObj,
-} = require('../src/definition')._private; // eslint-disable-line no-underscore-dangle
+const { compile, asFlag, on, onExist, convertNames, spread, spreadObj } = require('../src/definition');
 
 describe('transformers', () => {
     describe('compile', () => {
@@ -213,13 +205,11 @@ describe('transformers', () => {
         it('should accept functions', () => {
             const source = [['foo', parseInt, '123', 123], ['bar', toString, 456, '456']];
             const converted = convertNames(...source);
-            converted
-                .filter(negate(isEmpty))
-                .forEach(({ name, mapVal } = {}, index) => {
-                    const [sName,, sTest, sResult] = source[index];
-                    assert.equal(name, sName);
-                    assert.equal(mapVal(sTest), sResult);
-                });
+            converted.filter(isObject).forEach(({ name, mapVal } = {}, index) => {
+                const [sName,, sTest, sResult] = source[index];
+                assert.equal(name, sName);
+                assert.equal(mapVal(sTest), sResult);
+            });
         });
         it('should ignore non-string primitives', () => {
             assert.deepStrictEqual(
