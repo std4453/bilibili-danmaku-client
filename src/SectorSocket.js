@@ -31,7 +31,7 @@ class SectorSocket extends EventEmitter {
     constructor(url, options = {}) {
         super();
 
-        const ws = new WebSocket(url, null, options);
+        const ws = new WebSocket(url, undefined, options);
         this.ws = ws;
         ws.on('message', this.onMessage.bind(this));
         ['open', 'close', 'error'].forEach((eventName) => {
