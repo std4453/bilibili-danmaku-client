@@ -1,6 +1,7 @@
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
+const dev = !!process.env.WEBPACK_SERVE;
 module.exports = {
     entry: './src/index.js',
     output: {
@@ -15,11 +16,11 @@ module.exports = {
             },
         ],
     },
-    plugins: [
+    plugins: dev ? [] : [
         new CleanWebpackPlugin(['dist']),
     ],
     devtool: 'source-map',
     target: 'web',
 
-    mode: 'development',
+    mode: dev ? 'development' : 'production',
 };
