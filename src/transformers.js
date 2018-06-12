@@ -1,11 +1,11 @@
-const { mapValues } = require('lodash');
+const { map, mapValues, isEmpty, negate, isString, isFunction, isArray, fromPairs, conformsTo, defaults, camelCase } = require('lodash');
 
 // compiler
 const compile = (src) => {
     if (typeof src === 'function') return src;
     else if (src instanceof Array) {
-        const compiled = src.map(compile);
-        return input => compiled.map(transformer => transformer(input));
+        const compiled = map(src, compile);
+        return input => map(compiled, transformer => transformer(input));
     } else if (typeof src === 'object') {
         const compiled = mapValues(src, compile);
         return input => mapValues(compiled, transformer => transformer(input));
@@ -20,38 +20,25 @@ const onWhen = (mapper, predicate, src) => {
     return input => (predicate(mapper(input)) ? compiled(mapper(input)) : null);
 };
 const on = (mapper, src) => onWhen(mapper, () => true, src);
-const exists = (input) => {
-    if (typeof input === 'undefined' || input === null) return false;
-    if (input instanceof Array) return input.length !== 0;
-    if (typeof input === 'object') return Object.keys(input).length !== 0;
-    return false;
-};
-const onExist = (mapper, src) => onWhen(mapper, exists, src);
+const onExist = (mapper, src) => onWhen(mapper, negate(isEmpty), src);
 const convertNames = (...names) => names
-    .map((nameOrArr) => {
-        if (nameOrArr instanceof Array && nameOrArr.length >= 2) {
-            const [name, fn] = nameOrArr;
-            if (!(typeof name === 'string') || !(fn instanceof Function)) return null;
-            return { name, fn };
-        } else if (typeof nameOrArr === 'string') return { name: nameOrArr, fn: n => n };
-        return null;
+    .map(name => (isString(name) ? [name] : name))
+    .map((arr) => {
+        if (!isArray(arr)) return null;
+        const [name, mapVal, mapKey] = arr;
+        const obj = defaults({ name, mapVal, mapKey }, { mapVal: v => v, mapKey: camelCase });
+        return conformsTo(obj, { name: isString, mapVal: isFunction, mapKey: isFunction }) ?
+            obj : null;
     });
-const spread = (...names) => {
-    const src = {};
-    convertNames(...names).forEach((converted, index) => {
-        if (converted === null) return;
-        const { name, fn } = converted;
-        src[name] = a => fn(a[index]);
-    });
-    return src;
-};
-const spreadObj = (...names) => {
-    const src = {};
-    convertNames(...names)
-        .filter(converted => converted !== null)
-        .forEach(({ name, fn }) => { src[name] = o => fn(o[name]); });
-    return src;
-};
+const spread = (...names) => fromPairs(convertNames(...names)
+    .map((converted, index) => {
+        if (isEmpty(converted)) return undefined;
+        const { name, mapVal, mapKey } = converted;
+        return [mapKey(name), a => mapVal(a[index])];
+    }).filter(negate(isEmpty)));
+const spreadObj = (...names) => fromPairs(convertNames(...names)
+    .filter(negate(isEmpty))
+    .map(({ name, mapVal, mapKey }) => [mapKey(name), o => mapVal(o[name])]));
 
 // definitions
 const danmuMsg = compile(on(m => m.info, {
@@ -65,64 +52,45 @@ const danmuMsg = compile(on(m => m.info, {
     }),
     medal: onExist(i => i[5], spread('first', 'second')),
 }));
-const sysMsg = compile({
-    ...spreadObj('msg', 'rep', 'styleType', 'url'),
-    msgText: m => m.msg_text,
-    realRoomId: m => m.real_roomid,
-    roomId: m => m.roomid,
-});
-const userSrc = {
-    ...spreadObj('face', 'uid'),
-    guardLevel: o => o.guard_level,
-    name: o => o.uname,
-};
+const sysMsg = compile(spreadObj(
+    'msg', 'rep', 'styleType', 'url', 'msg_text',
+    ['real_roomid', undefined, () => 'realRoomId'],
+    ['roomid', undefined, () => 'roomId'],
+));
+const userSrc = spreadObj(
+    'face', 'uid', 'guard_level',
+    ['uname', undefined, () => 'name'],
+);
 const parseTopUser = compile({
-    ...userSrc,
-    ...spreadObj('rank', 'score', ['isSelf', asFlag]),
+    ...userSrc, ...spreadObj('rank', 'score', ['isSelf', asFlag]),
 });
 const sendGift = compile(on(m => m.data, {
-    ...spreadObj('giftName', 'giftId', 'giftType', 'num', 'remain', 'price', 'action', 'timestamp'),
+    ...spreadObj(
+        'giftName', 'giftId', 'giftType', 'num', 'remain', 'price', 'action', 'timestamp',
+        'coin_type', 'total_coin', 'super_gift_num', 'effect_block',
+    ),
     sender: userSrc,
     left: onWhen(m => m, m => m.gold > 0 && m.silver > 0, spreadObj('gold', 'silver')),
-    topList: on(d => d.top_list, [
-        on(l => l[0], parseTopUser),
-        on(l => l[1], parseTopUser),
-        on(l => l[2], parseTopUser),
-    ]),
-    coinType: d => d.coin_type,
-    totalCoin: d => d.total_coin,
-    superGiftNum: d => d.super_gift_num,
-    effectBlock: d => d.effect_block,
+    topList: d => map(d.top_list, parseTopUser),
 }));
-const roomRank = compile(on(m => m.data, {
-    ...spreadObj('timestamp', 'color'),
-    roomId: d => d.roomid,
-    rank: d => d.rank_desc,
-    h5Url: d => d.h5_url,
-    webUrl: d => d.web_url,
-}));
+const roomRank = compile(on(m => m.data, spreadObj(
+    'timestamp', 'color', 'h5_url', 'web_url',
+    ['roomid', undefined, () => 'roomId'],
+    ['rank_desc', undefined, () => 'rank'],
+)));
 const welcome = compile(on(m => m.data, {
-    uid: d => d.uid,
-    name: d => d.uname,
-    isAdmin: d => asFlag(d.is_admin),
+    ...spreadObj('uid', ['uname', undefined, () => 'name'], ['is_admin', asFlag, camelCase]),
     isVip: d => ('vip' in d && d.vip === 1) || ('svip' in d && d.svip === 1),
     isSvip: d => ('svip' in d && d.svip === 1),
 }));
-const welcomeGuard = compile(on(m => m.data, {
-    uid: d => d.uid,
-    name: d => d.username,
-    guardLevel: d => d.guard_level,
-}));
-const comboEnd = compile(on(m => m.data, {
-    price: d => d.price,
-    gitId: d => d.gift_id,
-    giftName: d => d.gift_name,
-    comboNum: d => d.combo_num,
-    name: d => d.uname, // sender name
-    owner: d => d.r_uname, // name of room owner
-    startTime: d => d.start_time,
-    endTime: d => d.end_time,
-}));
+const welcomeGuard = compile(on(m => m.data, spreadObj(
+    'uid', 'guard_level', ['username', undefined, () => 'name'],
+)));
+const comboEnd = compile(on(m => m.data, spreadObj(
+    'price', 'gift_id', 'gift_name', 'combo_num', 'price', 'gift_id', 'start_time', 'end_time',
+    ['uname', undefined, () => 'name'], // sender name
+    ['r_uname', undefined, () => 'owner'], // name of room owner
+)));
 
 // transformer
 class Transformer {
@@ -148,7 +116,7 @@ const transformers = {
 
 module.exports = {
     _private: { // for testing
-        compile, asFlag, onWhen, on, exists, onExist, convertNames, spread, spreadObj,
+        compile, asFlag, onWhen, on, onExist, convertNames, spread, spreadObj,
     },
 
     Transformer,

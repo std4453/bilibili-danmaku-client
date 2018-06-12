@@ -1,11 +1,11 @@
 /* global describe it */
+const { toString, negate, isEmpty } = require('lodash');
 const assert = require('assert');
 
 const {
     compile,
     asFlag,
     on,
-    exists,
     onExist,
     convertNames,
     spread,
@@ -124,7 +124,7 @@ describe('transformers', () => {
             };
             const compiled = compile(source);
             const compiledAgain = compile(compiled);
-            assert.equal(compiled, compiledAgain);
+            assert.strictEqual(compiled, compiledAgain);
             assert.deepStrictEqual(compiledAgain({ foo: 1 }), { foo: 1 });
         });
     });
@@ -170,33 +170,6 @@ describe('transformers', () => {
         });
     });
 
-    describe('exists', () => {
-        it('should return false on undefined', () => {
-            assert.equal(exists(undefined), false);
-        });
-        it('should return false on null', () => {
-            assert.equal(exists(null), false);
-        });
-        it('should return false on []', () => {
-            assert.equal(exists([]), false);
-        });
-        it('should return false on {}', () => {
-            assert.equal(exists({}), false);
-        });
-        it('should return true on non-empty array', () => {
-            assert.equal(exists([1]), true);
-        });
-        it('should return true on non-empty object', () => {
-            assert.equal(exists({ a: 1 }), true);
-        });
-        it('should return false on primitive', () => {
-            assert.equal(exists(1), false);
-        });
-        it('should return false on function', () => {
-            assert.equal(exists(() => {}), false);
-        });
-    });
-
     describe('onExist', () => {
         const fn = compile({
             data: onExist(o => o.arr, {
@@ -232,20 +205,21 @@ describe('transformers', () => {
             const source = ['foo', 'bar'];
             const converted = convertNames(...source);
             const obj = { qux: 123 };
-            converted.forEach(({ name, fn }, index) => {
+            converted.forEach(({ name, mapVal }, index) => {
                 assert.equal(name, source[index]);
-                assert.equal(fn(obj), obj);
+                assert.equal(mapVal(obj), obj);
             });
         });
         it('should accept functions', () => {
-            const toString = a => a.toString();
             const source = [['foo', parseInt, '123', 123], ['bar', toString, 456, '456']];
             const converted = convertNames(...source);
-            converted.forEach(({ name, fn }, index) => {
-                const [sName,, sTest, sResult] = source[index];
-                assert.equal(name, sName);
-                assert.equal(fn(sTest), sResult);
-            });
+            converted
+                .filter(negate(isEmpty))
+                .forEach(({ name, mapVal } = {}, index) => {
+                    const [sName,, sTest, sResult] = source[index];
+                    assert.equal(name, sName);
+                    assert.equal(mapVal(sTest), sResult);
+                });
         });
         it('should ignore non-string primitives', () => {
             assert.deepStrictEqual(
@@ -255,8 +229,8 @@ describe('transformers', () => {
         });
         it('should ignore invalid arrays', () => {
             assert.deepStrictEqual(
-                convertNames([], ['foo'], ['foo', 'bar'], ['foo', {}], ['foo', 1], ['foo', undefined]),
-                [null, null, null, null, null, null],
+                convertNames([], ['foo', 'bar'], ['foo', {}], ['foo', 1]),
+                [null, null, null, null],
             );
         });
     });
