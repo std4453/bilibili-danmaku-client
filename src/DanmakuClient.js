@@ -1,5 +1,5 @@
 const EventEmitter = require('events');
-const defaultsDeep = require('lodash.defaultsdeep');
+const { defaultsDeep } = require('lodash');
 const log = require('debug')('bilibili-danmaku-client/client');
 
 const SectorSocket = require('./SectorSocket');

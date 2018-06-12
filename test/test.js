@@ -2,7 +2,6 @@
 const assert = require('assert');
 
 const {
-    map,
     compile,
     asFlag,
     on,
@@ -14,22 +13,6 @@ const {
 } = require('../src/transformers')._private; // eslint-disable-line no-underscore-dangle
 
 describe('transformers', () => {
-    describe('map', () => {
-        it('should map all keys in an object', () => {
-            const obj = {
-                foo: '1',
-                bar: '2',
-                baz: '3',
-            };
-            const result = {
-                foo: 1,
-                bar: 2,
-                baz: 3,
-            };
-            assert.deepStrictEqual(map(obj, parseInt), result);
-        });
-    });
-
     describe('compile', () => {
         it('should return directly when compiling a function', () => {
             assert.equal(compile(m => 1)({}), 1); // eslint-disable-line no-unused-vars

@@ -17,7 +17,7 @@
  * @module biliDanmakuClient/middlewares
  */
 
-const defaultsDeep = require('lodash.defaultsdeep');
+const { defaultsDeep } = require('lodash');
 const log = require('debug')('bilibili-danmaku-client/middlewares');
 
 const { InitSector, InitAckSector, HeartbeatSector, DataSector } = require('./sectors');

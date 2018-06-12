@@ -37,7 +37,7 @@
  */
 
 const { Buffer } = require('buffer');
-const isEqual = require('lodash.isequal');
+const { isEqual } = require('lodash');
 
 const { HeartbeatSector, HeartbeatAckSector, DataSector, InitSector, InitAckSector } = require('./sectors');
 

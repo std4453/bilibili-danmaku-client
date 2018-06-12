@@ -24,8 +24,7 @@
   "license": "MIT",
   "dependencies": {
     "debug": "^3.1.0",
-    "lodash.defaultsdeep": "^4.6.0",
-    "lodash.isequal": "^4.5.0",
+    "lodash": "^4.17.10",
     "x-platform-ws": "^0.2.0"
   },
   "devDependencies": {

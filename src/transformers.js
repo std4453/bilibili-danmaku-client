@@ -1,17 +1,14 @@
+const { mapValues } = require('lodash');
+
 // compiler
-const map = (obj, fn) => {
-    const mapped = {};
-    Object.keys(obj).forEach((key) => { mapped[key] = fn(obj[key]); });
-    return mapped;
-};
 const compile = (src) => {
     if (typeof src === 'function') return src;
     else if (src instanceof Array) {
         const compiled = src.map(compile);
         return input => compiled.map(transformer => transformer(input));
     } else if (typeof src === 'object') {
-        const compiled = map(src, compile);
-        return input => map(compiled, transformer => transformer(input));
+        const compiled = mapValues(src, compile);
+        return input => mapValues(compiled, transformer => transformer(input));
     }
     throw new Error(`Unable to compile: ${src}.`);
 };
@@ -151,7 +148,7 @@ const transformers = {
 
 module.exports = {
     _private: { // for testing
-        map, compile, asFlag, onWhen, on, exists, onExist, convertNames, spread, spreadObj,
+        compile, asFlag, onWhen, on, exists, onExist, convertNames, spread, spreadObj,
     },
 
     Transformer,
