@@ -51,6 +51,9 @@ const comboEnd = compile(on(m => m.data, spreadObj(
     ['uname', undefined, () => 'name'], // sender name
     ['r_uname', undefined, () => 'owner'], // name of room owner
 )));
+const preparing = compile(spreadObj(['roomid', undefined, 'roomId']));
+const guardMsg = compile(spreadObj('msg', 'buy_type'));
+const silentOff = compile(spreadObj(['roomid', undefined, 'roomId`']));
 
 // transformer
 class Transformer {
@@ -72,6 +75,9 @@ const transformers = {
     WELCOME: new Transformer('vipEnter', welcome),
     WELCOME_GUARD: new Transformer('guardEnter', welcomeGuard),
     COMBO_END: new Transformer('comboEnd', comboEnd),
+    PREPARING: new Transformer('liveEnd', preparing),
+    GUARD_MSG: new Transformer('guardBuy', guardMsg),
+    ROOM_SILENT_OFF: new Transformer('silentOff', silentOff),
 };
 
 module.exports = {
