@@ -1,17 +1,6 @@
-const { map, mapValues, isEmpty, negate, isString, isFunction, isArray, isObject, fromPairs, conformsTo, defaults, camelCase } = require('lodash');
+const { isEmpty, negate, isString, isFunction, isArray, isObject, fromPairs, conformsTo, defaults, camelCase } = require('lodash');
 
-// compiler
-const compile = (src) => {
-    if (typeof src === 'function') return src;
-    else if (isArray(src)) {
-        const compiled = map(src, compile);
-        return input => map(compiled, transformer => transformer(input));
-    } else if (isObject(src)) {
-        const compiled = mapValues(src, compile);
-        return input => mapValues(compiled, transformer => transformer(input));
-    }
-    throw new Error(`Unable to compile: ${src}.`);
-};
+const compile = require('./compile');
 
 // helper methods
 const asFlag = input => !!input;
@@ -39,4 +28,4 @@ const spread = (...names) => fromPairs(convertNames(...names)
 const spreadObj = (...names) => fromPairs(convertNames(...names)
     .filter(isObject).map(({ name, mapVal, mapKey }) => [mapKey(name), o => mapVal(o[name])]));
 
-module.exports = { compile, asFlag, onWhen, on, onExist, convertNames, spread, spreadObj };
+module.exports = { asFlag, onWhen, on, onExist, convertNames, spread, spreadObj };
