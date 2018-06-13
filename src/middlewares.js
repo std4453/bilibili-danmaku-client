@@ -17,7 +17,7 @@
  * @module biliDanmakuClient/middlewares
  */
 
-const { defaultsDeep } = require('lodash');
+const { defaultsDeep, fromPairs } = require('lodash');
 const log = require('debug')('bilibili-danmaku-client/middlewares');
 
 const { InitSector, InitAckSector, HeartbeatSector, DataSector } = require('./sectors');
@@ -101,7 +101,7 @@ const invokeTransformer = new Middleware(
             }
         });
     }, {
-        transformers: all,
+        transformers: fromPairs(all.map(t => [t.name, t])),
         logUntransformed: true,
     },
 );

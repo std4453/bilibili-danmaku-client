@@ -1,7 +1,29 @@
+const { isFunction } = require('lodash');
+
 const { compile, asFlag, onWhen, on, onExist, spread, spreadObj } = require('./definition');
 
+// transformer
+class Transformer {
+    constructor(cmd, name, fnOrDef) {
+        this.cmd = cmd;
+        this.name = name;
+        const fn = isFunction(fnOrDef) ? fnOrDef : compile(fnOrDef);
+        this.fn = fn;
+    }
+
+    transform(input) {
+        return this.fn(input);
+    }
+}
+
+// live start & end
+const liveEnd = new Transformer('PREPARING', 'liveEnd',
+    spreadObj(['roomid', parseInt, () => 'roomId']));
+const liveStart = new Transformer('LIVE', 'liveStart',
+    spreadObj(['roomid', parseInt, () => 'roomId']));
+
 // danmaku
-const danmuMsg = compile(on(m => m.info, {
+const danmaku = new Transformer('DANMU_MSG', 'danmaku', on(m => m.info, {
     timestamp: i => i[0][4],
     content: i => i[1],
     sender: on(i => i[2], spread('uid', 'name', ['isOwner', asFlag], ['isVip', asFlag], ['isSvip', asFlag])),
@@ -13,37 +35,6 @@ const danmuMsg = compile(on(m => m.info, {
     medal: onExist(i => i[5], spread('first', 'second')),
 }));
 
-// welcome
-const welcome = compile(on(m => m.data, {
-    ...spreadObj('uid', ['uname', undefined, () => 'name'], ['is_admin', asFlag]),
-    isVip: d => ('vip' in d && d.vip === 1) || ('svip' in d && d.svip === 1),
-    isSvip: d => ('svip' in d && d.svip === 1),
-}));
-const welcomeGuard = compile(on(m => m.data, spreadObj(
-    'uid', 'guard_level', ['username', undefined, () => 'name'],
-)));
-
-// guard
-const guardBuy = compile({
-    ...on(m => m.data, {
-        ...spreadObj('guard_level', 'num'),
-        buyer: spreadObj(['username', undefined, () => 'name'], 'uid'),
-    }),
-    ...spreadObj(['roomid', parseInt, () => 'roomId']),
-});
-
-// broadcast message
-const guardMsg = compile(spreadObj('msg', ['buy_type', undefined, () => 'guardLevel']));
-const sysMsg = compile(spreadObj(
-    'msg', 'rep', 'styleType', 'url', 'msg_text',
-    ['real_roomid', undefined, () => 'realRoomId'],
-    ['roomid', undefined, () => 'roomId'],
-));
-
-// live start & end
-const preparing = compile(spreadObj(['roomid', parseInt, () => 'roomId']));
-const live = compile(spreadObj(['roomid', parseInt, () => 'roomId']));
-
 // gift
 const userSrc = spreadObj(
     'face', 'uid', 'guard_level',
@@ -52,7 +43,7 @@ const userSrc = spreadObj(
 const parseTopUser = compile({
     ...userSrc, ...spreadObj('rank', 'score', ['isSelf', asFlag]),
 });
-const sendGift = compile(on(m => m.data, {
+const gift = new Transformer('SEND_GIFT', 'gift', on(m => m.data, {
     ...spreadObj(
         'giftName', 'giftId', 'giftType', 'num', 'remain', 'price', 'action', 'timestamp',
         'coin_type', 'total_coin', 'super_gift_num', 'effect_block',
@@ -61,20 +52,39 @@ const sendGift = compile(on(m => m.data, {
     left: onWhen(m => m, m => m.gold > 0 && m.silver > 0, spreadObj('gold', 'silver')),
     topList: d => d.top_list.map(parseTopUser),
 }));
-const specialGift = compile(on(m => m.data[39], {
+const tempoStorm = new Transformer('SPECIAL_GIFT', 'tempoStorm', on(m => m.data[39], {
     ...spreadObj('action', 'id'),
     storm: onWhen(d => d, d => d.action === 'start', spreadObj(
         'content', 'time', 'storm_gif', ['hadJoin', undefined, () => 'joined'], 'num',
     )),
 }));
-const comboEnd = compile(on(m => m.data, spreadObj(
+const comboEnd = new Transformer('COMBO_END', 'comboEnd', on(m => m.data, spreadObj(
     'price', 'gift_id', 'gift_name', 'combo_num', 'price', 'gift_id', 'start_time', 'end_time',
     ['uname', undefined, () => 'name'], // sender name
     ['r_uname', undefined, () => 'owner'], // name of room owner
 )));
 
+// broadcast message
+const guardMsg = new Transformer('GUARD_MSG', 'guardMsg',
+    spreadObj('msg', ['buy_type', undefined, () => 'guardLevel']));
+const sysMsg = new Transformer('SYS_MSG', 'sysMsg', spreadObj(
+    'msg', 'rep', 'styleType', 'url', 'msg_text',
+    ['real_roomid', undefined, () => 'realRoomId'],
+    ['roomid', undefined, () => 'roomId'],
+));
+
+// welcome
+const welcomeVip = new Transformer('WELCOME', 'welcomeVip', on(m => m.data, {
+    ...spreadObj('uid', ['uname', undefined, () => 'name'], ['is_admin', asFlag]),
+    isVip: d => ('vip' in d && d.vip === 1) || ('svip' in d && d.svip === 1),
+    isSvip: d => ('svip' in d && d.svip === 1),
+}));
+const welcomeGuard = new Transformer('WELCOME_GUARD', 'welcomeGuard', on(m => m.data, spreadObj(
+    'uid', 'guard_level', ['username', undefined, () => 'name'],
+)));
+
 // events
-const wishBottle = compile(on(m => m.data, {
+const wishBottle = new Transformer('WISH_BOTTLE', 'wishBottle', on(m => m.data, {
     ...spreadObj('action', 'id'),
     wish: on(m => m.wish, spreadObj(
         'content', 'status', 'type', 'type_id', 'uid', 'wish_limit', 'wish_progress', 'count_map',
@@ -82,60 +92,54 @@ const wishBottle = compile(on(m => m.data, {
         ['uid', undefined, () => 'anchor'],
     )),
 }));
-const roomRank = compile(on(m => m.data, spreadObj(
+const roomRank = new Transformer('ROOM_RANK', 'roomRank', on(m => m.data, spreadObj(
     'timestamp', 'color', 'h5_url', 'web_url',
     ['roomid', undefined, () => 'roomId'],
     ['rank_desc', undefined, () => 'rank'],
 )));
+const guardBuy = new Transformer('GUARD_BUY', 'guardBuy', {
+    ...on(m => m.data, {
+        ...spreadObj('guard_level', 'num'),
+        buyer: spreadObj(['username', undefined, () => 'name'], 'uid'),
+    }),
+    ...spreadObj(['roomid', parseInt, () => 'roomId']),
+});
 
 // blocking
-const roomBlockMsg = compile({
+const blockUser = new Transformer('ROOM_BLOCK_MSG', 'blockUser', {
     roomId: m => m.roomid,
-    blockedUser: spreadObj(['uid', parseInt], ['uname', null, () => 'name']),
+    blocked: spreadObj(['uid', parseInt], ['uname', null, () => 'name']),
 });
-const roomSilentOn = compile({
+const silentOn = new Transformer('ROOM_SILENT_ON', 'silentOn', {
     roomId: m => m.roomid,
     ...on(m => m.data, {
         ...spreadObj('type', 'second'),
         ...onWhen(d => d, d => d.type === 'level', spreadObj('level')),
     }),
 });
-const roomSilentOff = compile(spreadObj(['roomid', parseInt, () => 'roomId`']));
+const silentOff = new Transformer('ROOM_SILENT_OFF', 'silentOff',
+    spreadObj(['roomid', parseInt, () => 'roomId`']));
 
-// transformer
-class Transformer {
-    constructor(name, fn) {
-        this.name = name;
-        this.fn = fn;
-    }
-
-    transform(input) {
-        return this.fn(input);
-    }
-}
-
-const transformers = {
-    DANMU_MSG: new Transformer('danmaku', danmuMsg),
-    SYS_MSG: new Transformer('sysMsg', sysMsg),
-    SEND_GIFT: new Transformer('gift', sendGift),
-    ROOM_RANK: new Transformer('roomRank', roomRank),
-    WELCOME: new Transformer('vipEnter', welcome),
-    WELCOME_GUARD: new Transformer('guardEnter', welcomeGuard),
-    COMBO_END: new Transformer('comboEnd', comboEnd),
-    GUARD_MSG: new Transformer('guardMsg', guardMsg),
-    GUARD_BUY: new Transformer('guardBuy', guardBuy),
-    LIVE: new Transformer('liveStart', live),
-    PREPARING: new Transformer('liveEnd', preparing),
-    SPECIAL_GIFT: new Transformer('tempoStorm', specialGift),
-    WISH_BOTTLE: new Transformer('wish', wishBottle),
-    ROOM_BLOCK_MSG: new Transformer('blockUser', roomBlockMsg),
-    ROOM_SILENT_ON: new Transformer('silentOn', roomSilentOn),
-    ROOM_SILENT_OFF: new Transformer('silentOff', roomSilentOff),
-};
+const transformers = [
+    liveStart,
+    liveEnd,
+    danmaku,
+    gift,
+    tempoStorm,
+    comboEnd,
+    guardMsg,
+    sysMsg,
+    welcomeVip,
+    welcomeGuard,
+    wishBottle,
+    roomRank,
+    guardBuy,
+    blockUser,
+    silentOn,
+    silentOff,
+];
 
 module.exports = {
-    Transformer,
-    ...transformers,
-    events: Object.keys(transformers).map(key => transformers[key].name),
+    events: transformers.map(t => t.name),
     all: transformers,
 };
