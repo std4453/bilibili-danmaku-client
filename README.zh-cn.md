@@ -46,7 +46,7 @@ B站直播弹幕接口的javascript客户端实现，在Node.js和浏览器段�
 那，那你听好了哦！先[安装`node`和`npm`](https://www.runoob.com/nodejs/nodejs-install-setup.html)，然后：
 
 ```console
-    $ npm install --save @std4453/bilibili-danmaku-client
+    $ npm install --save bilibili-danmaku-client
 ```
 
 （脸红）别问那么多为什么了！跟着做就是了！行不行本小姐把你电成烤猪肉！如果蹦出来什么`peer dependencies not installed`之类的，不要管他就是了！知道了吗！
@@ -62,7 +62,7 @@ B站直播弹幕接口的javascript客户端实现，在Node.js和浏览器段�
 ### 建立连接
 
 ```javascript
-    const DanmakuClient = require('@std4453/bilibili-danmaku-client');
+    const DanmakuClient = require('bilibili-danmaku-client');
     const client = new DanmakuClient({
         room: 5440, // https://live.bilibili.com/1
     });
@@ -152,7 +152,7 @@ B站直播弹幕接口的javascript客户端实现，在Node.js和浏览器段�
 ## 外部链接
 
 - [在线演示](https://std4453.github.io/bilibili-danmaku-client)
-- [npm包](https://www.npmjs.com/package/@std4453/bilibili-danmaku-client)
+- [npm包](https://www.npmjs.com/package/bilibili-danmaku-client)
 - [知乎文章](https://zhuanlan.zhihu.com/p/37874066) （欢迎点赞、关注）
 - [API文档](https://github.com/std4453/bilibili-danmaku-client/blob/master/docs/api.zh-cn.md)
 

@@ -40,7 +40,7 @@ It can't be easier to install a `npm` package.
 First make sure that you have `npm` and `node` correctly installed and in `PATH`, and then:
 
 ```console
-    $ npm install --save @std4453/bilibili-danmaku-client
+    $ npm install --save bilibili-danmaku-client
 ```
 
 If you see something like `peer dependencies not installed`, don't panic, see [this sector](#usage-in-browser) below.
@@ -54,7 +54,7 @@ If you see something like `peer dependencies not installed`, don't panic, see [t
 ### Open a connection
 
 ```javascript
-    const DanmakuClient = require('@std4453/bilibili-danmaku-client');
+    const DanmakuClient = require('bilibili-danmaku-client');
     const client = new DanmakuClient({
         room: 5440, // https://live.bilibili.com/1
     });
@@ -127,7 +127,7 @@ To build and test the package yourself:
 ## Links
 
 - [Live demo](https://std4453.github.io/bilibili-danmaku-client)
-- [npm package](https://www.npmjs.com/package/@std4453/bilibili-danmaku-client)
+- [npm package](https://www.npmjs.com/package/bilibili-danmaku-client)
 - [Zhihu article](https://zhuanlan.zhihu.com/p/37874066) (Chinese)
 - [API reference](https://github.com/std4453/bilibili-danmaku-client/blob/master/docs/api.md)
 
