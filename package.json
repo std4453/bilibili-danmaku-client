@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "test": "mocha",
-    "lint": "eslint **/*.js"
+    "lint": "eslint **/*.js",
+    "build": "babel src --out-dir dist --source-maps"
   },
   "keywords": [
     "bilibili",
@@ -23,11 +24,16 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@babel/polyfill": "^7.0.0-beta.51",
     "debug": "^3.1.0",
     "lodash": "^4.17.10",
     "x-platform-ws": "^0.2.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.51",
+    "@babel/core": "^7.0.0-beta.51",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.51",
+    "@babel/preset-env": "^7.0.0-beta.51",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.12.0",

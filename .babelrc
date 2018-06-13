@@ -1,0 +1,15 @@
+{
+    "presets": [
+        ["@babel/env", {
+            "loose": true,
+            "useBuiltIns": "usage",
+            "targets": {
+                "node": "current",
+                "browsers": [ ">0.25%", "not ie 11", "not op_mini all"]
+            }
+        }]
+    ],
+    "plugins": [
+        ["@babel/plugin-proposal-object-rest-spread", { "loose": true, "useBuiltIns": true }]
+    ]
+}
