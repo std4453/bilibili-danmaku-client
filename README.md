@@ -14,6 +14,10 @@ A standalone client for connecting to the Bilibili Live Danmaku Interface, in No
     - [Listen to client lifecycle](#listen-to-client-lifecycle)
     - [Terminate client](#terminate-client)
 - [Usage in browser](#usage-in-browser)
+- [Developement](#development)
+- [Links](#links)
+- [Author](#author)
+- [License](#license)
 
 ## Translations
 
