@@ -4,7 +4,7 @@
   "description": "A Node.js client for the Bilibili Live Danmaku Interface",
   "main": "dist/index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --recursive --require @babel/register",
     "lint": "eslint **/*.js",
     "build": "babel src --out-dir dist --source-maps"
   },
@@ -34,6 +34,8 @@
     "@babel/core": "^7.0.0-beta.51",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.51",
     "@babel/preset-env": "^7.0.0-beta.51",
+    "@babel/register": "^7.0.0-beta.51",
+    "core-js": "^2.5.7",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.12.0",
