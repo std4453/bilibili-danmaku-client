@@ -1,84 +1,16 @@
 const EventEmitter = require('events');
 const { defaultsDeep } = require('lodash');
-const log = require('debug')('bilibili-danmaku-client/client');
 
 const SectorSocket = require('./SectorSocket');
 const { Middleware, all } = require('./middlewares');
 
-// TODO: make this more elegant.
-/**
- * The Middleware that manages the lifecycle of DanmakuClient.
- * This middleware is necessary for DanmakuClient to work correctly and is so closely
- * related to the internal mechanics of DanmakuClient so that it must be placed in
- * DanmakuClient.js.
- *
- * Lifecycle of DanmakuClient instance are described with their state attribute.
- * A list of all possible lifecycle states are:
- * 'idle': When the client is not yet started.
- * 'connecting': When the client is started and trying to connect to the remote server.
- * 'opened': When the WebSocket connection is opened and ready to send and receive data.
- * 'reconnecting': When the DanmakuClient is in keepAlive mode and waiting to reconnect.
- * 'terminating': When the termination is request and waiting for the actual termination
- *     to take place.
- * 'terminated': When the client is terminated.
- *
- * Each DanmakuClient has a mode, keepAlive or non-keepAlive, configured by setting
- * conf.keepAlive.enabled.
- * In non-keepAlive mode, the client terminates directly after the WebSocket is closed
- * or gets an error. In keepAlive mode, the client waits for some time interval and then
- * tries to reconnecto to the server again.
- *
- * State transitions are as follows:
- * Start from 'idle'.
- * 'idle' -> 'connecting' on start()
- * 'connecting' -> 'terminated' on non-keepAlive and connection error
- *              -> 'opened' on successful connection
- *              -> 'terminating' on terminate()
- * 'opened' -> 'terminated' on non-keepAlive and connection close / error
- *          -> 'reconnecting' on keepAlive and connection close / error
- *          -> 'terminating' on terminate()
- * 'reconnecting' -> 'connecting' after some time interval
- *                -> 'terminating' on terminate()
- * 'terminating' -> 'terminated' on connection close / next setState() call
- * 'terminated' is the final state.
- */
-const manageLifecycle = new Middleware(
-    (ws, conf, client) => {
-        // If terminate is requested, switch to terminated and return false, else return true.
-        const checkTerminate = () => {
-            if (client.state === 'terminating') {
-                client.setState('terminated');
-                return false;
-            }
-            return true;
-        };
-
-        if (!checkTerminate()) return;
-        client.setState('connecting');
-        ws.on('open', () => { if (checkTerminate()) client.setState('opened'); });
-
-        const closeAction = conf.keepAlive.enabled ? () => {
-            if (!checkTerminate()) return;
-            if (client.state === 'reconnecting') return;
-
-            const reconnStr = conf.keepAlive.reconnectInterval.toFixed(0);
-            log(`Connection to ${conf.url} closed / got an error while in keepAlive mode, therefore DanmakuClient will auto-reconnect after ${reconnStr} seconds.`);
-            log('To terminate the client, call terminate().');
-            client.setState('reconnecting');
-
-            const reconnect = () => { if (checkTerminate()) client.connect(); };
-            setTimeout(reconnect, conf.keepAlive.reconnectInterval);
-        } : () => { if (checkTerminate()) client.setState('terminated'); };
-        ['close', 'error'].forEach(name => ws.on(name, closeAction));
-
-        client.once('terminate', () => ws.terminate());
-    }, {
-        keepAlive: {
-            enabled: true,
-            reconnectInterval: 5000,
-        },
-    },
-);
+// TODO: Add documentation
+const manageLifecycle = new Middleware((ws, _, client) => {
+    client.setState('connecting');
+    ws.on('open', () => client.setState('opened'));
+    ['close', 'error'].forEach(name => ws.on(name, () => client.setState('terminated')));
+    client.once('terminate', () => ws.terminate());
+});
 
 const defaultConf = {
     url: 'wss://broadcastlv.chat.bilibili.com:2245/sub',

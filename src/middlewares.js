@@ -26,8 +26,7 @@ const { all } = require('./transformers');
 /**
  * Middleware are used to config the SectorSocket and the DanmakuClient instance.
  * Middleware instances can be reused arbitrary times, across different SectorSocket
- * and DanmakuClient instances. In fact, it can be called multiple times in an
- * keepAlive connection.
+ * and DanmakuClient instances.
  */
 class Middleware {
     /**
