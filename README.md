@@ -1,4 +1,4 @@
-﻿![Header image](/assets/header.svg)
+﻿![Header image](assets/header.svg)
 
 [![npm](https://img.shields.io/npm/v/bilibili-danmaku-client.svg?style=flat-square)](https://www.npmjs.com/package/bilibili-danmaku-client)
 [![npm](https://img.shields.io/npm/l/bilibili-danmaku-client.svg?style=flat-square)](https://www.npmjs.com/package/bilibili-danmaku-client)
@@ -9,7 +9,7 @@
 
 A standalone client for connecting to the Bilibili Live Danmaku Interface, in Node.js and the browser.
 
-_Read this in another language: [English](/README.md), [简体中文](/README.zh-cn.md)._
+_Read this in another language: [English](README.md), [简体中文](README.zh-cn.md)._
 
 ## Table of content
 
@@ -71,7 +71,7 @@ If you see something like `peer dependencies not installed`, don't panic, see [t
         console.log(`${sender.name} => ${giftName} * ${num}`)));
 ```
 
-For more information about messages, see [`docs/messages.md`](/docs/messages.md).
+For more information about messages, see [`docs/messages.md`](docs/messages.md).
 
 ### Listen to client lifecycle
 
@@ -91,7 +91,7 @@ For more information about messages, see [`docs/messages.md`](/docs/messages.md)
 
 Note that you must listen to the `'terminated'` event to be notified when the client is actually terminated. `terminate()` only requires termination, not forces it.
 
-For more information about how to use `DanmakuClient`, see [`docs/api.md`](/docs/api.md).
+For more information about how to use `DanmakuClient`, see [`docs/api.md`](docs/api.md).
 
 ## Usage in browser
 
@@ -130,7 +130,7 @@ To build and test the package yourself:
 - [Live demo](https://std4453.github.io/bilibili-danmaku-client)
 - [npm package](https://www.npmjs.com/package/bilibili-danmaku-client)
 - [Zhihu article](https://zhuanlan.zhihu.com/p/37874066) (Chinese)
-- [API reference](/docs/api.md)
+- [API reference](docs/api.md)
 
 ## Author
 
