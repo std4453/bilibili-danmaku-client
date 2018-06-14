@@ -4,6 +4,11 @@
 
 A standalone client for connecting to the Bilibili Live Danmaku Interface, in Node.js and the browser.
 
+[![npm](https://img.shields.io/npm/v/bilibili-danmaku-client.svg?style=flat-square)](https://www.npmjs.com/package/bilibili-danmaku-client)
+[![npm](https://img.shields.io/npm/l/bilibili-danmaku-client.svg?style=flat-square)](https://www.npmjs.com/package/bilibili-danmaku-client)
+[![david-dm](https://img.shields.io/david/std4453/bilibili-danmaku-client.svg?style=flat-square)](https://github.com/std4453/bilibili-danmaku-client)
+[![Maintainability](https://api.codeclimate.com/v1/badges/0f3581cbb3d2d9bd0243/maintainability)](https://codeclimate.com/github/std4453/bilibili-danmaku-client/maintainability)
+
 ## Table of content
 
 - [Table of content](#table-of-content)
