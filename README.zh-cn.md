@@ -1,5 +1,10 @@
 ![Header image](/assets/header.svg)
 
+[![npm](https://img.shields.io/npm/v/bilibili-danmaku-client.svg?style=flat-square)](https://www.npmjs.com/package/bilibili-danmaku-client)
+[![npm](https://img.shields.io/npm/l/bilibili-danmaku-client.svg?style=flat-square)](https://www.npmjs.com/package/bilibili-danmaku-client)
+[![david-dm](https://img.shields.io/david/std4453/bilibili-danmaku-client.svg?style=flat-square)](https://github.com/std4453/bilibili-danmaku-client)
+[![Maintainability](https://api.codeclimate.com/v1/badges/0f3581cbb3d2d9bd0243/maintainability)](https://codeclimate.com/github/std4453/bilibili-danmaku-client/maintainability)
+
 # 哔哩哔哩弹幕自动手记人偶
 
 > 彼女はまだ知らない、「愛してる」の意味を。
@@ -8,14 +13,8 @@
 
 B站直播弹幕接口的javascript客户端实现，在Node.js和浏览器段均可使用。
 
-[![npm](https://img.shields.io/npm/v/bilibili-danmaku-client.svg?style=flat-square)](https://www.npmjs.com/package/bilibili-danmaku-client)
-[![npm](https://img.shields.io/npm/l/bilibili-danmaku-client.svg?style=flat-square)](https://www.npmjs.com/package/bilibili-danmaku-client)
-[![david-dm](https://img.shields.io/david/std4453/bilibili-danmaku-client.svg?style=flat-square)](https://github.com/std4453/bilibili-danmaku-client)
-[![Maintainability](https://api.codeclimate.com/v1/badges/0f3581cbb3d2d9bd0243/maintainability)](https://codeclimate.com/github/std4453/bilibili-danmaku-client/maintainability)
-
 ## 目录
 
-- [目录](#目录)
 - [翻译版本](#翻译版本)
 - [简介](#简洁)
 - [安装](#安装)
