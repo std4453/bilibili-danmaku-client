@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha --recursive --require @babel/register",
     "lint": "eslint **/*.js",
-    "build": "babel src --out-dir dist --source-maps"
+    "build": "babel src --out-dir dist"
   },
   "keywords": [
     "bilibili",

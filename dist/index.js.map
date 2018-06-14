@@ -1,1 +1,0 @@
-{"version":3,"sources":["../src/index.js"],"names":["DanmakuClient","require","module","exports"],"mappings":";;AAAA,IAAMA,gBAAgBC,QAAQ,iBAAR,CAAtB;;AAEAC,OAAOC,OAAP,GAAiBH,aAAjB","sourcesContent":["const DanmakuClient = require('./DanmakuClient');\r\n\r\nmodule.exports = DanmakuClient;\r\n"],"file":"index.js"}
