@@ -13,7 +13,7 @@
 
 B站直播弹幕接口的javascript客户端实现，在Node.js和浏览器段均可使用。
 
-_本文档在不同语言下有多种版本：[English](https://github.com/std4453/bilibili-danmaku-client/blob/master/README.md)，[简体中文](https://github.com/std4453/bilibili-danmaku-client/blob/master/README.zh-cn.md)。_
+_本文档在不同语言下有多种版本：[English](/README.md)，[简体中文](/README.zh-cn.md)。_
 
 ## 目录
 
@@ -79,7 +79,7 @@ _本文档在不同语言下有多种版本：[English](https://github.com/std44
         console.log(`${sender.name} => ${giftName} * ${num}`)));
 ```
 
-消息部分的具体细节请看[`docs/messages.md`](https://github.com/std4453/bilibili-danmaku-client/blob/master/docs/messages.zh-cn.md)。
+消息部分的具体细节请看[`docs/messages.md`](/docs/messages.zh-cn.md)。
 
 ### 监听生命周期事件
 
@@ -101,7 +101,7 @@ _本文档在不同语言下有多种版本：[English](https://github.com/std44
 
 注意`terminate()`只向客户端提出关闭请求，客户端正式关闭后会产生`'terminated'`事件。如果有必要的话，请根据`'terminated'`事件来进行处理。
 
-关于`DanmakuClient`类的更多信息请看 [`docs/api.md`](https://github.com/std4453/bilibili-danmaku-client/blob/master/docs/api.zh-cn.md)。
+关于`DanmakuClient`类的更多信息请看 [`docs/api.md`](/docs/api.zh-cn.md)。
 
 ## 在浏览器中使用
 
@@ -155,7 +155,7 @@ _本文档在不同语言下有多种版本：[English](https://github.com/std44
 - [在线演示](https://std4453.github.io/bilibili-danmaku-client)
 - [npm包](https://www.npmjs.com/package/bilibili-danmaku-client)
 - [知乎文章](https://zhuanlan.zhihu.com/p/37874066) （欢迎点赞、关注）
-- [API文档](https://github.com/std4453/bilibili-danmaku-client/blob/master/docs/api.zh-cn.md)
+- [API文档](/docs/api.zh-cn.md)
 
 ## 作者
 
