@@ -1,3 +1,5 @@
+![Header image](/assets/header.svg)
+
 # 哔哩哔哩弹幕自动手记人偶
 
 > ~~我是薇尔莉特·伊芙加登~~

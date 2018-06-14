@@ -1,3 +1,5 @@
+![Header image](/assets/header.svg)
+
 # Bilibili Danmaku Client
 
 A standalone client for connecting to the Bilibili Live Danmaku Interface, in Node.js and the browser.
