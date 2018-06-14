@@ -13,9 +13,10 @@
 
 B站直播弹幕接口的javascript客户端实现，在Node.js和浏览器段均可使用。
 
+_本文档在不同语言下有多种版本：[English](https://github.com/std4453/bilibili-danmaku-client/blob/master/README.md)，[简体中文](https://github.com/std4453/bilibili-danmaku-client/blob/master/README.zh-cn.md)。_
+
 ## 目录
 
-- [翻译版本](#翻译版本)
 - [简介](#简洁)
 - [安装](#安装)
 - [使用方法](#使用方法)
@@ -28,12 +29,6 @@ B站直播弹幕接口的javascript客户端实现，在Node.js和浏览器段�
 - [外部链接](#外部链接)
 - [作者](#作者)
 - [许可证](#许可证)
-
-## 翻译版本
-
-[English](https://github.com/std4453/bilibili-danmaku-client/blob/master/README.md)
-
-[简体中文](https://github.com/std4453/bilibili-danmaku-client/blob/master/README.zh-cn.md)
 
 ## 简介
 

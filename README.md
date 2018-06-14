@@ -9,9 +9,10 @@
 
 A standalone client for connecting to the Bilibili Live Danmaku Interface, in Node.js and the browser.
 
+_Read this in another language: [English](https://github.com/std4453/bilibili-danmaku-client/blob/master/README.md), [简体中文](https://github.com/std4453/bilibili-danmaku-client/blob/master/README.zh-cn.md)._
+
 ## Table of content
 
-- [Translations](#translations)
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -24,12 +25,6 @@ A standalone client for connecting to the Bilibili Live Danmaku Interface, in No
 - [Links](#links)
 - [Author](#author)
 - [License](#license)
-
-## Translations
-
-[English](https://github.com/std4453/bilibili-danmaku-client/blob/master/README.md)
-
-[简体中文](https://github.com/std4453/bilibili-danmaku-client/blob/master/README.zh-cn.md)
 
 ## Introduction
 
