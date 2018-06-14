@@ -1,4 +1,4 @@
-![Header image](/assets/header.svg)
+﻿![Header image](/assets/header.svg)
 
 [![npm](https://img.shields.io/npm/v/bilibili-danmaku-client.svg?style=flat-square)](https://www.npmjs.com/package/bilibili-danmaku-client)
 [![npm](https://img.shields.io/npm/l/bilibili-danmaku-client.svg?style=flat-square)](https://www.npmjs.com/package/bilibili-danmaku-client)
