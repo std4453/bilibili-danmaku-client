@@ -4,3 +4,12 @@ node_js:
   - "7"
   - "9"
   - "node"
+addons:
+  code_climate:
+    repo_token:
+      secure: "JpR24d2LxsUklMKRYj7yxrpoScNNUNWEo1AE/hNEsu9EL7y84gym972qPwcYSule73pdjjmBvSkP+Z2YLdaDHeNq0OLcygc3rG7NeC2Qjd/qtm8ImrIptplNRLkrSVbZPnThpbAkJBMk62jIHAHMGL/ui9BSI5fBJhnmlDHKG8qAyE16VqhALhM8lNABmR5jqq3fBzVf0N8aUTGHY4K/3okZlFgHe/rDjHfxXPHBJZruIFXMNrMMzuZBTUdKn+A9j9OiNTyht+8LgE7WlYipertjkMNDZXqj1zjX9qcOVykgSSFyyjvPCh5cfc95AYidKasxgnU2Ezazwh0vudLkZ9n9xiShB+4pEA1yPENr7hwRepcp2z7O1YHQ+Hn/w9BxH2//UGhM6xGty+4rYYE1/Bv6LvJePcdHJ8e5ExVjYxC8SfTrJzQkMCNkEnc24MqBYIOYbPaJZtJ5/sJS3UCqujzt+ms6ZOaU4OI+gv2GwfpoSgHdPOtWgeZSU3IgTEN+mNvWh94U6cKYTTnKhXaN2h7iOPTbLLgYOCi3nVdRIdua6m/wPB1jKRRelwLGD+IiMcjGRd4lDIg2t2so+MYVL65oG4syFzDnOMQZoje7nrUZ4LyL30BFv9QHUyhXO0V9ZBIRPotetIwzn6QQmdHAjGwXevEg5SMRB6NwZ31xWKM="
+script: nyc --reporter=lcov --require @babel/register --require @babel/polyfill mocha --recursive
+before_script:
+  - npm install codeclimate-test-reporter nyc -g
+after_script:
+  - codeclimate-test-reporter < ./coverage/lcov.info
