@@ -100,7 +100,7 @@ const invokeTransformer = new Middleware(
             }
         });
     }, {
-        transformers: fromPairs(all.map(t => [t.name, t])),
+        transformers: fromPairs(all.map(t => [t.cmd, t])),
         logUntransformed: true,
     },
 );
