@@ -20,6 +20,7 @@
   },
   "homepage": "https://std4453.github.io/bilibili-danmaku-client",
   "dependencies": {
+    "@babel/polyfill": "^7.0.0-beta.51",
     "bilibili-danmaku-client": "^1.4.0",
     "buffer": "^5.1.0",
     "debug": "^3.1.0",
@@ -29,24 +30,28 @@
     "vue": "^2.5.16"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0-beta.51",
+    "@babel/preset-env": "^7.0.0-beta.51",
+    "@babel/preset-stage-2": "^7.0.0-beta.51",
     "@webpack-cli/init": "0.0.8",
     "ajv": "^6.5.1",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
+    "autoprefixer": "^8.6.2",
+    "babel-loader": "^8.0.0-beta.3",
     "clean-webpack-plugin": "^0.1.19",
     "css-loader": "^0.28.11",
+    "cssnano": "^3.10.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-loader": "^2.0.0",
     "eslint-plugin-import": "^2.12.0",
     "file-loader": "^1.1.11",
+    "postcss-cssnext": "^3.1.0",
+    "postcss-import": "^11.1.0",
     "postcss-loader": "^2.1.5",
     "vue-loader": "^15.2.4",
     "vue-template-compiler": "^2.5.16",
     "webpack": "^4.12.0",
-    "webpack-cli": "^3.0.4",
+    "webpack-cli": "^3.0.6",
     "webpack-serve": "^1.0.4"
   }
 }
