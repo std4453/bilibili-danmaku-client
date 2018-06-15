@@ -10,7 +10,7 @@ const compile = (src) => {
         const compiled = mapValues(src, compile);
         return input => mapValues(compiled, transformer => transformer(input));
     }
-    throw new Error(`Unable to compile: ${src}.`);
+    return () => src;
 };
 
 module.exports = compile;

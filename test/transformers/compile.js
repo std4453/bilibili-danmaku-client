@@ -98,15 +98,15 @@ describe('compile', () => {
         };
         assert.deepStrictEqual(fn(obj), result);
     });
-    it('should throw an error when compiling a primitive', () => {
-        assert.throws(() => {
-            compile(1);
-        });
+    it('should return it when compiling a primitive', () => {
+        assert.deepStrictEqual(compile({ foo: 1 })({}), { foo: 1 });
+        assert.deepStrictEqual(compile({ foo: 1 })({ foo: 'bar' }), { foo: 1 });
+        assert.deepStrictEqual(compile({ foo: true })({}), { foo: true });
+        assert.deepStrictEqual(compile({ foo: true })({ foo: 'bar' }), { foo: true });
     });
-    it('should throw an error when compiling a string', () => {
-        assert.throws(() => {
-            compile('');
-        });
+    it('should return it error when compiling a string', () => {
+        assert.deepStrictEqual(compile({ foo: '' })({}), { foo: '' });
+        assert.deepStrictEqual(compile({ foo: '' })({ foo: 'bar' }), { foo: '' });
     });
     it('should not compile the same source again', () => {
         const source = {
