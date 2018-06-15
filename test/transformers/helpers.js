@@ -84,6 +84,30 @@ describe('helpers', () => {
             };
             assert.deepStrictEqual(fn(obj), result);
         });
+        it('should return a second parameter', () => {
+            const fn2 = compile({
+                data: onExist(o => o.arr,
+                    {
+                        first: arr => arr[0],
+                        second: arr => arr[1],
+                    },
+                    {
+                        first: 'foo',
+                        second: 'bar',
+                    },
+                ),
+            });
+            const obj = {
+                data: 1,
+            };
+            const result = {
+                data: {
+                    first: 'foo',
+                    second: 'bar',
+                },
+            };
+            assert.deepStrictEqual(fn2(obj), result);
+        });
     });
 
     describe('#toMapVal', () => {

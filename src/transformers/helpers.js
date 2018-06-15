@@ -54,19 +54,21 @@ const on = (mapper, def) => {
 
 /**
  * Return an Definition that:
- * - if predicate(mapper(input)) returns true, execute the specified Definition on the Input
- *   mapped with mapper.
- * - otherwise, return null.
+ * - if predicate(mapper(input)) returns true, execute def1 on the Input mapped with mapper.
+ * - otherwise, execute def2 on the input mapper with mapper.
  *
  * @param {Function} mapper The function used to map input.
  * @param {Function} predicate The functino used to decide whether the Definition should be
  *   executed or not.
- * @param {any} def The Definition.
+ * @param {any} def1 The Definition used when predicate(mapper(input)) is true.
+ * @param {any} def2 The Definitino used when predicate(mapper(input)) is false. Default to
+ *   null.
  * @returns {Function} The returned Definition.
  */
-const onWhen = (mapper, predicate, def) => {
-    const compiled = compile(def);
-    return on(mapper, input => (predicate(input) ? compiled(input) : null));
+const onWhen = (mapper, predicate, def1, def2 = null) => {
+    const compiled1 = compile(def1);
+    const compiled2 = compile(def2);
+    return on(mapper, input => (predicate(input) ? compiled1(input) : compiled2(null)));
 };
 
 /**
@@ -77,13 +79,15 @@ const onWhen = (mapper, predicate, def) => {
  * onExist(a => a.data, { foo: d => d.foo });
  * Which ensures that, if a.data is undefined or {}, d => d.foo will not even be executed
  * and no Error is thrown.
- * However _.isEmpty() is just a very simple check, so use this method if applicable.
+ * However _.isEmpty() is just a very simple check, so use this method only when applicable.
  *
  * @param {Function} mapper The function used to map input.e
- * @param {*} src The Definition.
+ * @param {any} def1 The Definition used when predicate(mapper(input)) is true.
+ * @param {any} def2 The Definitino used when predicate(mapper(input)) is false. Default to
+ *   null.
  * @returns The returned Definition.
  */
-const onExist = (mapper, def) => onWhen(mapper, negate(isEmpty), def);
+const onExist = (mapper, def1, def2) => onWhen(mapper, negate(isEmpty), def1, def2);
 
 /**
  * Turn input into a function that maps input value to desired value.
