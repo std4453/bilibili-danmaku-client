@@ -4,6 +4,7 @@
         "indent": ["error", 4],
         "linebreak-style": ["error", "windows"],
         "function-paren-newline": "off",
-        "object-curly-newline": "off"
+        "object-curly-newline": "off",
+        "no-restricted-syntax": "off"
     }
 }
