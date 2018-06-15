@@ -1,5 +1,6 @@
 const Transformer = require('./Transformer');
-const { compile, asFlag, onWhen, on, onExist, spread, spreadObj } = require('./compile');
+const compile = require('./compile');
+const { asFlag, onWhen, on, onExist, spread, spreadObj } = require('./helpers');
 
 // live start & end
 const liveEnd = new Transformer('PREPARING', 'liveEnd',
