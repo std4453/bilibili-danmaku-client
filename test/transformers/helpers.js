@@ -1,9 +1,18 @@
 const { describe, it } = require('mocha');
 const assert = require('assert');
-const { toString, isObject } = require('lodash');
+const { toString, isObject, camelCase } = require('lodash');
 
 const compile = require('../../src/transformers/compile');
-const { asFlag, on, onExist, convertNames, spread, spreadObj } = require('../../src/transformers/helpers');
+const {
+    asFlag,
+    on,
+    onExist,
+    toMapVal,
+    toMapKey,
+    convertNames,
+    spread,
+    spreadObj,
+} = require('../../src/transformers/helpers');
 
 describe('helpers', () => {
     describe('#asFlag()', () => {
@@ -77,6 +86,35 @@ describe('helpers', () => {
         });
     });
 
+    describe('#toMapVal', () => {
+        it('should return functions unchanged', () => {
+            assert.strictEqual(toMapVal(parseInt), parseInt);
+        });
+        it('should return other things as v => v', () => {
+            const tests = [1, 0, undefined, '42', 'Hello', false, null, {}, [], { foo: 1 }, ['bar', undefined]];
+            tests.forEach(testParam => tests.forEach(testInput =>
+                assert.deepStrictEqual(toMapVal(testParam)(testInput), testInput)));
+        });
+    });
+
+    describe('#toMapKey', () => {
+        it('should return function unchanged', () => {
+            assert.strictEqual(toMapVal(toString), toString);
+        });
+        it('should return strings as () => str', () => {
+            const tests = [1, 0, undefined, '42', 'Hello', false, null, {}, [], { foo: 1 }, ['bar', undefined]];
+            const strings = ['Hello', 'foo', '', 'ジョジョの奇妙な冒険'];
+            strings.forEach(testParam => tests.forEach(testInput =>
+                assert.strictEqual(toMapKey(testParam)(testInput), testParam)));
+        });
+        it('should return other things as camelCase', () => {
+            const tests = [1, 0, undefined, false, null, {}, [], { foo: 1 }, ['bar', undefined]];
+            const strings = ['PascalCase', 'snake-case', 'camelCase', 'whaTEvEr_cASE'];
+            tests.forEach(testParam => strings.forEach(testInput =>
+                assert.strictEqual(toMapKey(testParam)(testInput), camelCase(testInput))));
+        });
+    });
+
     describe('#convertNames()', () => {
         it('should accept strings', () => {
             const source = ['foo', 'bar'];
@@ -87,26 +125,66 @@ describe('helpers', () => {
                 assert.equal(mapVal(obj), obj);
             });
         });
-        it('should accept functions', () => {
-            const source = [['foo', parseInt, '123', 123], ['bar', toString, 456, '456']];
-            const converted = convertNames(...source);
-            converted.filter(isObject).forEach(({ name, mapVal } = {}, index) => {
-                const [sName,, sTest, sResult] = source[index];
-                assert.equal(name, sName);
-                assert.equal(mapVal(sTest), sResult);
-            });
-        });
         it('should ignore non-string primitives', () => {
             assert.deepStrictEqual(
                 convertNames(1, 0.1, true, undefined, null),
                 [null, null, null, null, null],
             );
         });
-        it('should ignore invalid arrays', () => {
-            assert.deepStrictEqual(
-                convertNames([], ['foo', 'bar'], ['foo', {}], ['foo', 1]),
-                [null, null, null, null],
-            );
+        it('should use toMapVal()', () => {
+            const source = [
+                {
+                    key: 'foo',
+                    fn: parseInt,
+                    input: '123',
+                },
+                {
+                    key: 'bar',
+                    fn: toString,
+                    input: 456,
+                },
+                {
+                    key: 'baz',
+                    fn: 42,
+                    input: 'Hello, world!',
+                },
+            ];
+            const converted = convertNames(...source.map(s => [s.key, s.fn]));
+            converted.filter(isObject).forEach(({ name, mapVal }, index) => {
+                const { input, fn, key } = source[index];
+                assert.equal(name, key);
+                assert.equal(mapVal(input), toMapVal(fn)(input));
+            });
+        });
+        it('should use toMapKey()', () => {
+            const source = [
+                {
+                    key: 'foo',
+                    fn: parseInt,
+                    input: '123',
+                },
+                {
+                    key: 'bar',
+                    fn: toString,
+                    input: 456,
+                },
+                {
+                    key: 'baz',
+                    fn: 'Hello, sorld!',
+                    input: 42,
+                },
+                {
+                    key: 'qux',
+                    fn: 42,
+                    input: 'Hello, world!',
+                },
+            ];
+            const converted = convertNames(...source.map(s => [s.key, 0, s.fn]));
+            converted.filter(isObject).forEach(({ name, mapKey }, index) => {
+                const { input, fn, key } = source[index];
+                assert.equal(name, key);
+                assert.equal(mapKey(input), toMapKey(fn)(input));
+            });
         });
     });
 
