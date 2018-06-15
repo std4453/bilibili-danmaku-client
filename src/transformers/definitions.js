@@ -1,3 +1,19 @@
+/**
+ * definitions.js describes the Definitions of Application Events.
+ * For the concept of Definition, see compile.js.
+ * For the concept of Application Events, see Wiki page 'Application Protocol'.
+ *
+ * This file does not contain much documentation because:
+ * - It makes use of Tramsformer.js, compile.js and helpers.js, which are well-
+ *   documented.
+ * - The code of Definitions are very easy to read and understand.
+ * - The details of how JSONs before transformation look like and how Events
+ *   after transformation look like are documented in a separate Wiki page
+ *   'Events'. That should be the first source of information, not this file.
+ *
+ * Therefore, the following transformers are NOT documented. My apologies.
+ */
+
 const Transformer = require('./Transformer');
 const compile = require('./compile');
 const { asFlag, onWhen, on, onExist, spread, spreadObj } = require('./helpers');
@@ -10,7 +26,7 @@ const liveStart = new Transformer('LIVE', 'liveStart',
 
 // danmaku
 const danmaku = new Transformer('DANMU_MSG', 'danmaku', on(m => m.info, {
-    timestamp: i => i[0][4],
+    timestamp: i => i[0][3],
     content: i => i[1],
     sender: on(i => i[2], spread('uid', 'name', ['isOwner', asFlag], ['isVip', asFlag], ['isSvip', asFlag])),
     badge: onExist(i => i[3], spread('level', 'name', 'owner', 'roomId')),
