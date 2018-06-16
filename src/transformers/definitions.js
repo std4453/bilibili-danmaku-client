@@ -19,10 +19,8 @@ const compile = require('./compile');
 const { asFlag, onWhen, on, onExist, spread, spreadObj } = require('./helpers');
 
 // live start & end
-const liveEnd = new Transformer('PREPARING', 'liveEnd',
-    spreadObj(['roomid', parseInt, () => 'roomId']));
-const liveStart = new Transformer('LIVE', 'liveStart',
-    spreadObj(['roomid', parseInt, () => 'roomId']));
+const liveEnd = new Transformer('PREPARING', 'liveEnd', spreadObj(['roomid', parseInt, 'roomId']));
+const liveStart = new Transformer('LIVE', 'liveStart', spreadObj(['roomid', parseInt, 'roomId']));
 
 // danmaku
 const danmaku = new Transformer('DANMU_MSG', 'danmaku', on(m => m.info, {
@@ -38,10 +36,7 @@ const danmaku = new Transformer('DANMU_MSG', 'danmaku', on(m => m.info, {
 }));
 
 // gift
-const userSrc = spreadObj(
-    'face', 'uid', 'guard_level',
-    ['uname', undefined, () => 'name'],
-);
+const userSrc = spreadObj('face', 'uid', 'guard_level', ['uname', 0, 'name']);
 const parseTopUser = compile({
     ...userSrc, ...spreadObj('rank', ['score', 0, 'spentCoins'], ['isSelf', asFlag]),
 });
@@ -57,32 +52,29 @@ const gift = new Transformer('SEND_GIFT', 'gift', on(m => m.data, {
 const tempoStorm = new Transformer('SPECIAL_GIFT', 'tempoStorm', on(m => m.data[39], {
     ...spreadObj('action', 'id'),
     storm: onWhen(d => d, d => d.action === 'start', spreadObj(
-        'content', 'time', 'storm_gif', ['hadJoin', undefined, () => 'joined'], 'num',
+        'content', 'time', 'storm_gif', ['hadJoin', 0, 'joined'], 'num',
     )),
 }));
 const comboEnd = new Transformer('COMBO_END', 'comboEnd', on(m => m.data, spreadObj(
     'price', 'gift_id', 'gift_name', 'combo_num', 'price', 'gift_id', 'start_time', 'end_time',
-    ['uname', undefined, () => 'name'], // sender name
-    ['r_uname', undefined, () => 'owner'], // name of room owner
+    ['uname', 0, 'name'], ['r_uname', 0, 'owner'],
 )));
 
 // broadcast message
-const guardMsg = new Transformer('GUARD_MSG', 'guardMsg',
-    spreadObj('msg', ['buy_type', undefined, () => 'guardLevel']));
+const guardMsg = new Transformer('GUARD_MSG', 'guardMsg', spreadObj('msg', ['buy_type', 0, 'guardLevel']));
 const sysMsg = new Transformer('SYS_MSG', 'sysMsg', spreadObj(
     'msg', 'rep', 'styleType', 'url', 'msg_text',
-    ['real_roomid', undefined, () => 'realRoomId'],
-    ['roomid', undefined, () => 'roomId'],
+    ['real_roomid', 0, 'realRoomId'], ['roomid', 0, 'roomId'],
 ));
 
 // welcome
 const welcomeVip = new Transformer('WELCOME', 'welcomeVip', on(m => m.data, {
-    ...spreadObj('uid', ['uname', undefined, () => 'name'], ['is_admin', asFlag]),
+    ...spreadObj('uid', ['uname', 0, 'name'], ['is_admin', asFlag]),
     isVip: d => ('vip' in d && d.vip === 1) || ('svip' in d && d.svip === 1),
     isSvip: d => ('svip' in d && d.svip === 1),
 }));
 const welcomeGuard = new Transformer('WELCOME_GUARD', 'welcomeGuard', on(m => m.data, spreadObj(
-    'uid', 'guard_level', ['username', undefined, () => 'name'],
+    'uid', 'guard_level', ['username', 0, 'name'],
 )));
 
 // events
@@ -90,14 +82,11 @@ const wishBottle = new Transformer('WISH_BOTTLE', 'wishBottle', on(m => m.data, 
     ...spreadObj('action', 'id'),
     wish: on(m => m.wish, spreadObj(
         'content', 'status', 'type', 'type_id', 'uid', 'wish_limit', 'wish_progress', 'count_map',
-        ['ctime', str => new Date(str).getTime(), () => 'timestamp'],
-        ['uid', undefined, () => 'anchor'],
+        ['ctime', str => new Date(str).getTime(), 'timestamp'], ['uid', 0, 'anchor'],
     )),
 }));
 const roomRank = new Transformer('ROOM_RANK', 'roomRank', on(m => m.data, spreadObj(
-    'timestamp', 'color', 'h5_url', 'web_url',
-    ['roomid', undefined, () => 'roomId'],
-    ['rank_desc', undefined, () => 'rank'],
+    'timestamp', 'color', 'h5_url', 'web_url', ['roomid', 0, 'roomId'], ['rank_desc', 0, 'rank'],
 )));
 const guardBuy = new Transformer('GUARD_BUY', 'guardBuy', {
     ...on(m => m.data, {
@@ -109,8 +98,7 @@ const guardBuy = new Transformer('GUARD_BUY', 'guardBuy', {
 
 // blocking
 const blockUser = new Transformer('ROOM_BLOCK_MSG', 'blockUser', {
-    roomId: m => m.roomid,
-    blocked: spreadObj(['uid', parseInt], ['uname', null, () => 'name']),
+    roomId: m => m.roomid, blocked: spreadObj(['uid', parseInt], ['uname', 0, 'name']),
 });
 const silentOn = new Transformer('ROOM_SILENT_ON', 'silentOn', {
     roomId: m => m.roomid,
@@ -119,8 +107,7 @@ const silentOn = new Transformer('ROOM_SILENT_ON', 'silentOn', {
         ...onWhen(d => d, d => d.type === 'level', spreadObj('level')),
     }),
 });
-const silentOff = new Transformer('ROOM_SILENT_OFF', 'silentOff',
-    spreadObj(['roomid', parseInt, () => 'roomId`']));
+const silentOff = new Transformer('ROOM_SILENT_OFF', 'silentOff', spreadObj(['roomid', parseInt, 'roomId']));
 
 module.exports = [
     liveStart,
