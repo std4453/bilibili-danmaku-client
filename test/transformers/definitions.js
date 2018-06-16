@@ -303,4 +303,31 @@ describe('transformers', () => {
 
         test(inputTemplate, outputTemplate, mockTemplate);
     });
+
+    it('should transform SYS_MSG correctly', () => {
+        const inputTemplate = {
+            cmd: 'SYS_MSG',
+            msg: 'Hello world!',
+            msg_text: 'Hello my world!',
+            rep: 123,
+            styleType: 321,
+            url: 'http://live.bilibili.com/123',
+            roomid: 123,
+            real_roomid: 1234567,
+            rnd: 1528469326,
+            tv_id: 0,
+        };
+
+        const outputTemplate = {
+            msg: 'Hello world!',
+            msgText: 'Hello my world!',
+            rep: 123,
+            styleType: 321,
+            url: 'http://live.bilibili.com/123',
+            realRoomId: 1234567,
+            roomId: 123,
+        };
+
+        test(inputTemplate, outputTemplate, {});
+    });
 });
