@@ -330,4 +330,29 @@ describe('transformers', () => {
 
         test(inputTemplate, outputTemplate, {});
     });
+
+    it('should transform ROOM_RANK correctly', () => {
+        const inputTemplate = {
+            data: {
+                roomid: 1234,
+                rank_desc: 'Foo',
+                color: '#FB7299',
+                h5_url: 'https://live.bilibili.com/p/eden/rank-h5-current?anchor_uid=123321',
+                web_url: 'https://live.bilibili.com/blackboard/room-current-rank.html',
+                timestamp: 1528480261,
+            },
+            cmd: 'ROOM_RANK',
+        };
+
+        const outputTemplate = {
+            roomId: 1234,
+            rank: 'Foo',
+            color: '#FB7299',
+            h5Url: 'https://live.bilibili.com/p/eden/rank-h5-current?anchor_uid=123321',
+            webUrl: 'https://live.bilibili.com/blackboard/room-current-rank.html',
+            timestamp: 1528480261,
+        };
+
+        test(inputTemplate, outputTemplate, {});
+    });
 });
