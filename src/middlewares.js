@@ -17,11 +17,11 @@
  * @module biliDanmakuClient/middlewares
  */
 
-const { defaultsDeep, fromPairs } = require('lodash');
+const { defaultsDeep } = require('lodash');
 const log = require('debug')('bilibili-danmaku-client/middlewares');
 
 const { InitSector, InitAckSector, HeartbeatSector, DataSector } = require('./sectors');
-const { all } = require('./transformers');
+const { registry } = require('./transformers');
 
 /**
  * Middleware are used to config the SectorSocket and the DanmakuClient instance.
@@ -100,7 +100,7 @@ const invokeTransformer = new Middleware(
             }
         });
     }, {
-        transformers: fromPairs(all.map(t => [t.cmd, t])),
+        transformers: registry,
         logUntransformed: true,
     },
 );
