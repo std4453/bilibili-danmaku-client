@@ -406,4 +406,33 @@ describe('transformers', () => {
 
         test(inputTemplate, outputTemplate, mockTemplate);
     });
+
+    it('should transform COMBO_END correctly', () => {
+        const inputTemplate = {
+            cmd: 'COMBO_END',
+            data: {
+                uname: 'Uncle Wang',
+                r_uname: 'Uncle Zhu',
+                combo_num: 123,
+                price: 1234,
+                gift_name: 'Alpha',
+                gift_id: 12345,
+                start_time: 12345678,
+                end_time: 23456789,
+            },
+        };
+
+        const outputTemplate = {
+            price: 1234,
+            giftId: 12345,
+            giftName: 'Alpha',
+            comboNum: 123,
+            startTime: 12345678,
+            endTime: 23456789,
+            name: 'Uncle Wang',
+            owner: 'Uncle Zhu',
+        };
+
+        test(inputTemplate, outputTemplate, {});
+    });
 });
