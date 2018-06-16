@@ -3,7 +3,7 @@ const assert = require('assert');
 const { fromPairs, isArray, isObject, isEmpty } = require('lodash');
 
 const compile = require('../../src/transformers/compile');
-const { onExist, on, spreadObj } = require('../../src/transformers/helpers');
+const { onExist, on, onWhen, spreadObj } = require('../../src/transformers/helpers');
 const all = require('../../src/transformers/definitions');
 
 const transformers = fromPairs(all.map(t => [t.cmd, t]));
@@ -354,5 +354,56 @@ describe('transformers', () => {
         };
 
         test(inputTemplate, outputTemplate, {});
+    });
+
+    it('should transform WELCOME correctly', () => {
+        const inputTemplate = {
+            cmd: 'WELCOME',
+            data: {
+                uid: 123321,
+                uname: 'Uncle Wang',
+                is_admin: mock => fromFlag(mock.isAdmin),
+                vip: onWhen(mock => mock.vip, vip => vip > 0, 1, undefined),
+                svip: onWhen(mock => mock.vip, vip => vip > 1, 1, undefined),
+            },
+        };
+
+        const outputTemplate = {
+            name: 'Uncle Wang',
+            uid: 123321,
+            isAdmin: mock => mock.isAdmin,
+            isVip: mock => mock.vip > 0,
+            isSvip: mock => mock.vip > 1,
+        };
+
+        const mockTemplate = {
+            isAdmin: chooseFrom(true, false),
+            vip: chooseFrom(0, 1, 2),
+        };
+
+        test(inputTemplate, outputTemplate, mockTemplate);
+    });
+
+    it('should transform WELCOME_GUARD correctly', () => {
+        const inputTemplate = {
+            cmd: 'WELCOME_GUARD',
+            data: {
+                uid: 123321,
+                username: 'Uncle Wang',
+                guard_level: mock => mock.guardLevel,
+            },
+        };
+
+        const outputTemplate = {
+            name: 'Uncle Wang',
+            uid: 123321,
+            guardLevel: mock => mock.guardLevel,
+        };
+
+        const mockTemplate = {
+            guardLevel: chooseFrom(0, 1, 2, 3),
+        };
+
+        test(inputTemplate, outputTemplate, mockTemplate);
     });
 });
