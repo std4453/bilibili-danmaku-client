@@ -9,6 +9,7 @@
  */
 
 const compile = require('./compile');
+const ApplicationEvent = require('./ApplicationEvent');
 
 /**
  * The Transformer class converts JSONs to Events.
@@ -51,7 +52,7 @@ class Transformer {
      * @returns {ApplicationEvent} The transformed Event.
      */
     transform(input) {
-        return this.fn(input);
+        return new ApplicationEvent(this.name, this.fn(input));
     }
 }
 

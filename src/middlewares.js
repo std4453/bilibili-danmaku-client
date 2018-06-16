@@ -92,8 +92,8 @@ const invokeTransformer = new Middleware(
             const msg = sector.data;
             if (!('cmd' in msg)) return;
             if (msg.cmd in conf.transformers) {
-                const transformer = conf.transformers[msg.cmd];
-                client.emit(transformer.name, transformer.transform(msg));
+                const event = conf.transformers[msg.cmd](msg);
+                client.emit('event', event);
             } else if (conf.logUntransformed) {
                 log('Untransformed data sector:');
                 log(msg);
