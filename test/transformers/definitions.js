@@ -1,19 +1,32 @@
 const { describe, it } = require('mocha');
 const assert = require('assert');
-const { fromPairs, isArray, isObject } = require('lodash');
+const { fromPairs, isArray, isObject, isEmpty } = require('lodash');
 
 const compile = require('../../src/transformers/compile');
-const { onExist } = require('../../src/transformers/helpers');
+const { onExist, on, spreadObj } = require('../../src/transformers/helpers');
 const all = require('../../src/transformers/definitions');
 
 const transformers = fromPairs(all.map(t => [t.cmd, t]));
 
-class Possibilities { constructor(values) { this.values = values; } }
-const chooseFrom = (...values) => new Possibilities(values);
+// helpers
+const iterable = Symbol('iterable');
+const chooseFrom = (...values) => ({ [iterable]: values[Symbol.iterator].bind(values) });
 function* map(generator, mapper) { for (const value of generator) yield mapper(value); }
+function* permutate(values) {
+    if (isEmpty(values)) yield [];
+    else {
+        for (const i of values.keys()) {
+            const newValues = [...values];
+            newValues.splice(i, 1);
+            yield* map(permutate(newValues), arr => [values[i], ...arr]);
+        }
+    }
+}
+const permutating = (...values) => ({ [iterable]: permutate.bind(null, values) });
 
-function* iterate(template, _keys, offset = 0) { // eslint-disable-line consistent-return
-    if (template instanceof Possibilities) yield* template.values[Symbol.iterator]();
+// iterate
+function* iterate(template, _keys, offset = 0) {
+    if (isObject(template) && iterable in template) yield* template[iterable]();
     else if (isArray(template)) {
         if (offset === template.length) yield [];
         else {
@@ -33,6 +46,10 @@ function* iterate(template, _keys, offset = 0) { // eslint-disable-line consiste
     } else yield template;
 }
 
+// helpers
+const fromFlag = bool => (bool ? 1 : 0);
+
+// test
 const test = (tInput, tOutput, tMock) => {
     const cInput = compile(tInput);
     const cOutput = compile(tOutput);
@@ -58,16 +75,16 @@ describe('transformers', () => {
                     0,
                 ],
                 mock => mock.content,
-                [
-                    mock => mock.user.uid,
-                    mock => mock.user.name,
-                    mock => (mock.user.isOwner ? 1 : 0),
-                    mock => (mock.user.isVip ? 1 : 0),
-                    mock => (mock.user.isSvip ? 1 : 0),
+                on(mock => mock.user, [
+                    user => user.uid,
+                    user => user.name,
+                    user => fromFlag(user.isOwner),
+                    user => fromFlag(user.isVip),
+                    user => fromFlag(user.isSvip),
                     '10000',
                     1,
                     '',
-                ],
+                ]),
                 onExist(mock => mock.badge, [
                     badge => badge.level,
                     badge => badge.name,
@@ -94,14 +111,9 @@ describe('transformers', () => {
             ],
             cmd: 'DANMU_MSG',
         };
-        const outputTemplate = {
-            timestamp: mock => mock.timestamp,
-            content: mock => mock.content,
-            sender: mock => mock.user,
-            ul: mock => mock.ul,
-            badge: mock => mock.badge,
-            medal: mock => mock.medal,
-        };
+        const outputTemplate = spreadObj(
+            'timestamp', 'content', ['user', 0, 'sender'], 'ul', 'badge', 'medal',
+        );
 
         const mockTemplate = {
             timestamp: 16777215,
@@ -127,6 +139,166 @@ describe('transformers', () => {
                 first: 'title-144-1',
                 second: 'title-256-1',
             }, null),
+        };
+
+        test(inputTemplate, outputTemplate, mockTemplate);
+    });
+
+    it('should transform SEND_GIFT correctly', () => {
+        const inputUserTemplate = spreadObj(['name', 0, 'uname'], 'uid', 'face', ['guardLevel', 0, 'guard_level']);
+        const inputTemplate = {
+            cmd: 'SEND_GIFT',
+            data: {
+                num: mock => mock.num,
+                uname: mock => mock.sender.name,
+                uid: mock => mock.sender.uid,
+                face: mock => mock.sender.face,
+                guard_level: mock => mock.sender.guardLevel,
+                rcost: 434023,
+                top_list: on(mock => mock.topList, [
+                    on(list => list[0], {
+                        ...inputUserTemplate,
+                        rank: 1,
+                        score: 4000,
+                        isSelf: user => fromFlag(user.isSelf),
+                    }), on(list => list[1], {
+                        ...inputUserTemplate,
+                        rank: 2,
+                        score: 2400,
+                        isSelf: user => fromFlag(user.isSelf),
+                    }), on(list => list[2], {
+                        ...inputUserTemplate,
+                        rank: 3,
+                        score: 2000,
+                        isSelf: user => fromFlag(user.isSelf),
+                    })]),
+                timestamp: mock => mock.timestamp,
+                giftType: mock => mock.gift.type,
+                giftName: mock => mock.gift.name,
+                giftId: mock => mock.gift.id,
+                price: mock => mock.gift.price,
+                action: mock => mock.action,
+                super: 0,
+                super_gift_num: mock => mock.superGiftNum,
+                rnd: '1596293081',
+                newMedal: 0,
+                newTitle: 0,
+                medal: [],
+                title: '',
+                beatId: '',
+                biz_source: 'live',
+                metadata: '',
+                remain: mock => mock.remain,
+                gold: onExist(mock => mock.left, left => left.gold, 0),
+                silver: onExist(mock => mock.left, left => left.silver, 0),
+                eventScore: 0,
+                eventNum: 0,
+                smalltv_msg: [],
+                specialGift: null,
+                notice_msg: [],
+                capsule: {
+                    colorful: {
+                        coin: 0,
+                        change: 0,
+                        progress: {
+                            now: 0,
+                            max: 5000,
+                        },
+                    },
+                    normal: {
+                        coin: 0,
+                        change: 0,
+                        progress: {
+                            now: 0,
+                            max: 10000,
+                        },
+                    },
+                    move: 1,
+                },
+                addFollow: 0,
+                effect_block: mock => mock.effectBlock,
+                coin_type: mock => mock.coinType,
+                total_coin: mock => mock.totalCoin,
+            },
+        };
+
+        const outputUserTemplate = spreadObj('name', 'uid', 'face', 'guardLevel', 'isSelf');
+        const outputTemplate = {
+            ...spreadObj(
+                'timestamp', 'sender', 'num', 'remain', 'superGiftNum', 'left', 'effectBlock',
+                'coinType', 'totalCoin', 'gift', 'action',
+            ),
+            sender: on(mock => mock.sender, spreadObj('name', 'uid', 'face', 'guardLevel')),
+            topList: on(mock => mock.topList, [
+                on(list => list[0], {
+                    rank: 1,
+                    spentCoins: 4000,
+                    ...outputUserTemplate,
+                }),
+                on(list => list[1], {
+                    rank: 2,
+                    spentCoins: 2400,
+                    ...outputUserTemplate,
+                }),
+                on(list => list[2], {
+                    rank: 3,
+                    spentCoins: 2000,
+                    ...outputUserTemplate,
+                }),
+            ]),
+        };
+
+        const users = [
+            {
+                name: 'Jonason Joestar',
+                face: 'http://i0.hdslb.com/bfs/face/asdasdasda.jpg',
+                guardLevel: 0,
+                uid: 1234567,
+                isSelf: false,
+            },
+            {
+                name: 'Hirashikata Jousuke',
+                face: 'http://i0.hdslb.com/bfs/face/zxczxczxcz.jpg',
+                guardLevel: 1,
+                uid: 8901234,
+                isSelf: true,
+            },
+            {
+                name: 'Dio Brando',
+                face: 'http://i0.hdslb.com/bfs/face/qweqweqweq.jpg',
+                guardLevel: 2,
+                uid: 5678901,
+                isSelf: false,
+            },
+        ];
+        const mockTemplate = {
+            timestamp: 16777215,
+            sender: chooseFrom(...users),
+            num: 123,
+            remain: 321,
+            superGiftNum: 456,
+            left: chooseFrom({ gold: 1234, silver: 5678 }, null),
+            effectBlock: 654,
+            coinType: chooseFrom('silver', 'gold'),
+            totalCoin: 12321,
+            gift: chooseFrom({
+                name: 'Alpha',
+                id: 0,
+                type: 1,
+                price: 100,
+            }, {
+                name: 'Beta',
+                id: 1,
+                type: 1,
+                price: 200,
+            }, {
+                name: 'Gamma',
+                id: 2,
+                type: 2,
+                price: 450000,
+            }),
+            topList: permutating(...users),
+            action: chooseFrom('foo', 'bar'),
         };
 
         test(inputTemplate, outputTemplate, mockTemplate);

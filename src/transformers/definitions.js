@@ -43,13 +43,13 @@ const userSrc = spreadObj(
     ['uname', undefined, () => 'name'],
 );
 const parseTopUser = compile({
-    ...userSrc, ...spreadObj('rank', 'score', ['isSelf', asFlag]),
+    ...userSrc, ...spreadObj('rank', ['score', 0, 'spentCoins'], ['isSelf', asFlag]),
 });
 const gift = new Transformer('SEND_GIFT', 'gift', on(m => m.data, {
     ...spreadObj(
-        'giftName', 'giftId', 'giftType', 'num', 'remain', 'price', 'action', 'timestamp',
-        'coin_type', 'total_coin', 'super_gift_num', 'effect_block',
+        'num', 'remain', 'action', 'timestamp', 'coin_type', 'total_coin', 'super_gift_num', 'effect_block',
     ),
+    gift: spreadObj(['giftName', 0, 'name'], ['giftId', 0, 'id'], ['giftType', 0, 'type'], 'price'),
     sender: userSrc,
     left: onWhen(m => m, m => m.gold > 0 && m.silver > 0, spreadObj('gold', 'silver')),
     topList: d => d.top_list.map(parseTopUser),
