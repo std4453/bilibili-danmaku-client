@@ -14,6 +14,8 @@
  * Therefore, the following transformers are NOT documented. My apologies.
  */
 
+const { fromPairs } = require('lodash');
+
 const Transformer = require('./Transformer');
 const compile = require('./compile');
 const { asFlag, onWhen, on, onExist, spread, spreadObj } = require('./helpers');
@@ -109,7 +111,7 @@ const silentOn = new Transformer('ROOM_SILENT_ON', 'silentOn', {
 });
 const silentOff = new Transformer('ROOM_SILENT_OFF', 'silentOff', spreadObj(['roomid', parseInt, 'roomId']));
 
-module.exports = [
+const transformers = [
     liveStart,
     liveEnd,
     danmaku,
@@ -127,3 +129,6 @@ module.exports = [
     silentOn,
     silentOff,
 ];
+const registry = fromPairs(transformers.map(t => [t.cmd, t]));
+
+module.exports = { transformers, registry };

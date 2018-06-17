@@ -3,7 +3,7 @@ const log = require('debug')('bilibili-danmaku-client/ApplicationConnection');
 
 const { CascadeConnection } = require('../connection');
 const DataConnection = require('../transport');
-const { registry } = require('./index');
+const { registry } = require('./definitions');
 
 const url = 'wss://broadcastlv.chat.bilibili.com:2245/sub';
 const getHandshake = room => ({

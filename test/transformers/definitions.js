@@ -1,12 +1,10 @@
 const { describe, it } = require('mocha');
 const assert = require('assert');
-const { fromPairs, isArray, isObject, isEmpty } = require('lodash');
+const { isArray, isObject, isEmpty } = require('lodash');
 
 const compile = require('../../src/application/compile');
 const { onExist, on, onWhen, spreadObj } = require('../../src/application/helpers');
-const all = require('../../src/application/definitions');
-
-const transformers = fromPairs(all.map(t => [t.cmd, t]));
+const { registry } = require('../../src/application/definitions');
 
 // helpers
 const iterable = Symbol('iterable');
@@ -55,7 +53,7 @@ const test = (tInput, tOutput, tMock) => {
     const cOutput = compile(tOutput);
 
     for (const mock of iterate(tMock)) {
-        assert.deepStrictEqual(transformers[tInput.cmd].transform(cInput(mock)), cOutput(mock));
+        assert.deepStrictEqual(registry[tInput.cmd].transform(cInput(mock)), cOutput(mock));
     }
 };
 
