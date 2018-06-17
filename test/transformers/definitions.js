@@ -53,7 +53,7 @@ const test = (tInput, tOutput, tMock) => {
     const cOutput = compile(tOutput);
 
     for (const mock of iterate(tMock)) {
-        assert.deepStrictEqual(registry[tInput.cmd].transform(cInput(mock)), cOutput(mock));
+        assert.deepStrictEqual(registry[tInput.cmd].transform(cInput(mock)).content, cOutput(mock));
     }
 };
 
