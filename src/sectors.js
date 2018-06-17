@@ -39,7 +39,7 @@ class Sector {
      * This is an abstract method and should be overridden by implementations
      * extending Sector.
      */
-    encode() { throw new Error('Not implemented.'); } // eslint-disable-line class-methods-use-this
+    encode() { throw new Error('Not implemented.'); }
 }
 /**
  * Class method, decode the Buffer object into a Sector object of the given type.
