@@ -2,7 +2,8 @@ const Buffer = require('buffer');
 const log = require('debug')('bilibili-danmaku-client/SectionConnection');
 const { isEqual } = require('lodash');
 
-const { WebSocketConnection, CascadeConnection } = require('./connection');
+const { CascadeConnection } = require('../connection');
+const WebSocketConnection = require('./WebSocketConnection');
 
 const protoVer = 2;
 const encoding = 'utf8';

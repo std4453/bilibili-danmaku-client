@@ -1,4 +1,4 @@
-const { CascadeConnection } = require('./connection');
+const { CascadeConnection } = require('../connection');
 const { SectionConnection, Section, SectionCoder, StringCoder, JsonCoder } = require('./SectionConnection');
 
 const handshakeCoder = new JsonCoder({ controlFlag: true, opCode: 7, binaryFlag: true });

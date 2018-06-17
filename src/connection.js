@@ -1,6 +1,5 @@
 const EventEmitter = require('events');
 const { defaults } = require('lodash');
-const WebSocket = require('x-platform-ws');
 
 class BaseConnection extends EventEmitter {
     constructor() {
@@ -98,14 +97,7 @@ class CascadeConnection extends BaseConnection {
     transform(data) { return data; }
 }
 
-class WebSocketConnection extends CascadeConnection {
-    constructor(...args) {
-        super(new WebSocket(...args));
-    }
-}
-
 module.exports = {
     BaseConnection,
     CascadeConnection,
-    WebSocketConnection,
 };
