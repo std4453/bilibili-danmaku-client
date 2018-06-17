@@ -21,7 +21,7 @@ const { defaultsDeep } = require('lodash');
 const log = require('debug')('bilibili-danmaku-client/middlewares');
 
 const { InitSector, InitAckSector, HeartbeatSector, DataSector } = require('./sectors');
-const { registry } = require('./transformers');
+const { registry } = require('./application');
 
 /**
  * Middleware are used to config the SectorSocket and the DanmakuClient instance.

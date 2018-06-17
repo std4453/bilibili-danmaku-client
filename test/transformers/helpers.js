@@ -2,7 +2,7 @@ const { describe, it } = require('mocha');
 const assert = require('assert');
 const { toString, isObject, camelCase } = require('lodash');
 
-const compile = require('../../src/transformers/compile');
+const compile = require('../../src/application/compile');
 const {
     asFlag,
     on,
@@ -12,7 +12,7 @@ const {
     convertNames,
     spread,
     spreadObj,
-} = require('../../src/transformers/helpers');
+} = require('../../src/application/helpers');
 
 describe('helpers', () => {
     describe('#asFlag()', () => {
