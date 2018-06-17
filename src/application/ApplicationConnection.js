@@ -19,6 +19,7 @@ class ApplicationConnection extends CascadeConnection {
     constructor(room, options = {}) {
         super(new DataConnection(url, getHandshake(room), defaultsDeep(options, defaultOptions)));
         this.on('open', () => log(`Connection opened: room=${room}.`));
+        this.on('close', () => log('Connection closed.'));
     }
 
     // eslint-disable-next-line no-unused-vars

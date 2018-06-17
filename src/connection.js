@@ -98,6 +98,9 @@ class CascadeConnection extends BaseConnection {
     requestSend(data) {
         this.parent.send(this.transform(data));
     }
+    requestClose() {
+        this.parent.close();
+    }
 
     detransform(data) { return data; }
     transform(data) { return data; }
