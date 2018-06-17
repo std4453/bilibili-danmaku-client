@@ -86,7 +86,13 @@ class CascadeConnection extends BaseConnection {
         if (error) parent.on('error', this.onError.bind(this));
         if (close) parent.on('close', this.onClose.bind(this));
         if (open) parent.on('open', this.onOpen.bind(this));
-        if (message) parent.on('message', data => this.onMessage(this.detransform(data)));
+        if (message) {
+            parent.on('message', (data) => {
+                const detransformed = this.detransform(data);
+                if (typeof detransformed === 'undefined') return;
+                this.onMessage(detransformed);
+            });
+        }
     }
 
     requestSend(data) {
