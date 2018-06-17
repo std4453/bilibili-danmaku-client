@@ -1,7 +1,7 @@
 const { describe, it } = require('mocha');
 const assert = require('assert');
 
-const compile = require('../../src/application/compile');
+const compile = require('../../src/util/compile');
 
 describe('compile', () => {
     it('should return directly when compiling a function', () => {

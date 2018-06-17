@@ -2,8 +2,8 @@ const { describe, it } = require('mocha');
 const assert = require('assert');
 const { isArray, isObject, isEmpty } = require('lodash');
 
-const compile = require('../../src/application/compile');
-const { onExist, on, onWhen, spreadObj } = require('../../src/application/helpers');
+const compile = require('../../src/util/compile');
+const { onExist, on, onWhen, spreadObj } = require('../../src/util/helpers');
 const { registry } = require('../../src/application/definitions');
 
 // helpers
