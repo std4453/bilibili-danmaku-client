@@ -21,7 +21,7 @@ _本文档在不同语言下有多种版本：[English](README.md)，[简体中�
 - [安装](#安装)
 - [使用方法](#使用方法)
     - [建立链接](#建立连接)
-    - [监听消息](#监听消息)
+    - [监听事件](#监听事件)
     - [监听生命周期事件](#监听生命周期事件)
     - [关闭客户端](#关闭客户端)
 - [在浏览器中使用](#在浏览器中使用)
@@ -64,29 +64,41 @@ _本文档在不同语言下有多种版本：[English](README.md)，[简体中�
 
 ```javascript
     const DanmakuClient = require('bilibili-danmaku-client');
-    const client = new DanmakuClient({
-        room: 5440, // https://live.bilibili.com/1
-    });
+    // https://live.bilibili.com/5440
+    const client = new DanmakuClient(5440);
+    client.start();
 ```
 
-### 监听消息
+### 监听事件
 
 ```javascript
     const client = ...;
-    client.on('danmaku', ({ content, sender }) =>
-        console.log(`${sender.name}: ${content}`));
-    client.on('gift', ({ giftName, num, sender } =>
-        console.log(`${sender.name} => ${giftName} * ${num}`)));
+    
+    const onDanmaku = ({ content, sender }) =>
+        console.log(`${sender.name}: ${content}`);
+    const onGift = ({ gift, num, sender }) =>
+        console.log(`${sender.name} => ${gift.name} * ${num}`);
+
+    client.on('event', ({ name, content }) => {
+        switch (name) {
+        case 'danmaku':
+            onDanmaku(content);
+            break;
+        case 'gift':
+            onGift(content);
+            break;
+        }
+    })
 ```
 
-消息部分的具体细节请看[`docs/messages.md`](docs/messages.zh-cn.md)。
+事件部分的具体细节请看[这里](https://github.com/std4453/bilibili-danmaku-client/wiki/Events)。（英语）
 
 ### 监听生命周期事件
 
 ```javascript
     const client = ...;
-    client.on('opened',  () => console.log('Client opened.'));
-    client.on('terminated', () => console.log('Client terminated'));
+    client.on('open', () => console.log('Client opened.'));
+    client.on('close', () => console.log('Client closed.'));
 ```
 
 （这就不用翻译了吧)
@@ -96,12 +108,12 @@ _本文档在不同语言下有多种版本：[English](README.md)，[简体中�
 ```javascript
     const client = ...;
     client.terminate();
-    client.on('terminated' () => console.log('Client terminated'));
+    client.on('close' () => console.log('Client closed.'));
 ```
 
-注意`terminate()`只向客户端提出关闭请求，客户端正式关闭后会产生`'terminated'`事件。如果有必要的话，请根据`'terminated'`事件来进行处理。
+注意`terminate()`只向客户端提出关闭请求，客户端正式关闭后会产生`'close'`事件。如果有必要的话，请根据`'close'`事件来进行处理。
 
-关于`DanmakuClient`类的更多信息请看 [`docs/api.md`](docs/api.zh-cn.md)。
+关于`DanmakuClient`类的更多信息请看[这里](https://github.com/std4453/bilibili-danmaku-client/wiki/DanmakuClient)。（英语）
 
 ## 在浏览器中使用
 
@@ -155,7 +167,7 @@ _本文档在不同语言下有多种版本：[English](README.md)，[简体中�
 - [在线演示](https://std4453.github.io/bilibili-danmaku-client)
 - [npm包](https://www.npmjs.com/package/bilibili-danmaku-client)
 - [知乎文章](https://zhuanlan.zhihu.com/p/37874066) （欢迎点赞、关注）
-- [API文档](docs/api.zh-cn.md)
+- [API文档](https://github.com/std4453/bilibili-danmaku-client/wiki/DanmakuClient) （英语）
 
 ## 作者
 

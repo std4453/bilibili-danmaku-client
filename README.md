@@ -17,7 +17,7 @@ _Read this in another language: [English](README.md), [简体中文](README.zh-c
 - [Installation](#installation)
 - [Usage](#usage)
     - [Open a connection](#open-a-connection)
-    - [Listen to messages](#listen-to-messages)
+    - [Listen to Events](#listen-to-events)
     - [Listen to client lifecycle](#listen-to-client-lifecycle)
     - [Terminate client](#terminate-client)
 - [Usage in browser](#usage-in-browser)
@@ -56,29 +56,41 @@ If you see something like `peer dependencies not installed`, don't panic, see [t
 
 ```javascript
     const DanmakuClient = require('bilibili-danmaku-client');
-    const client = new DanmakuClient({
-        room: 5440, // https://live.bilibili.com/1
-    });
+    // https://live.bilibili.com/5440
+    const client = new DanmakuClient(5440);
+    client.start();
 ```
 
-### Listen to messages
+### Listen to Events
 
 ```javascript
     const client = ...;
-    client.on('danmaku', ({ content, sender }) =>
-        console.log(`${sender.name}: ${content}`));
-    client.on('gift', ({ giftName, num, sender } =>
-        console.log(`${sender.name} => ${giftName} * ${num}`)));
+    
+    const onDanmaku = ({ content, sender }) =>
+        console.log(`${sender.name}: ${content}`);
+    const onGift = ({ gift, num, sender }) =>
+        console.log(`${sender.name} => ${gift.name} * ${num}`);
+
+    client.on('event', ({ name, content }) => {
+        switch (name) {
+        case 'danmaku':
+            onDanmaku(content);
+            break;
+        case 'gift':
+            onGift(content);
+            break;
+        }
+    })
 ```
 
-For more information about messages, see [`docs/messages.md`](docs/messages.md).
+For more information about __Events__, see [Wiki](https://github.com/std4453/bilibili-danmaku-client/wiki/Events).
 
 ### Listen to client lifecycle
 
 ```javascript
     const client = ...;
-    client.on('opened',  () => console.log('Client opened.'));
-    client.on('terminated', () => console.log('Client terminated'));
+    client.on('open', () => console.log('Client opened.'));
+    client.on('close', () => console.log('Client closed.'));
 ```
 
 ### Terminate client
@@ -86,12 +98,12 @@ For more information about messages, see [`docs/messages.md`](docs/messages.md).
 ```javascript
     const client = ...;
     client.terminate();
-    client.on('terminated' () => console.log('Client terminated'));
+    client.on('close' () => console.log('Client closed.'));
 ```
 
-Note that you must listen to the `'terminated'` event to be notified when the client is actually terminated. `terminate()` only requires termination, not forces it.
+Note that you must listen to the `'close'` event to be notified when the client is actually closed. `terminate()` only requests close, not forces it.
 
-For more information about how to use `DanmakuClient`, see [`docs/api.md`](docs/api.md).
+For more information about how to use `DanmakuClient`, see [Wiki](https://github.com/std4453/bilibili-danmaku-client/wiki/DanmakuClient).
 
 ## Usage in browser
 
@@ -130,7 +142,7 @@ To build and test the package yourself:
 - [Live demo](https://std4453.github.io/bilibili-danmaku-client)
 - [npm package](https://www.npmjs.com/package/bilibili-danmaku-client)
 - [Zhihu article](https://zhuanlan.zhihu.com/p/37874066) (Chinese)
-- [API reference](docs/api.md)
+- [API reference](https://github.com/std4453/bilibili-danmaku-client/wiki/DanmakuClient)
 
 ## Author
 
