@@ -8,7 +8,7 @@
  * For the concept of Definition and Input, see compile.js.
  */
 
-const compile = require('./compile');
+const compile = require('../util/compile');
 const ApplicationEvent = require('./ApplicationEvent');
 
 /**

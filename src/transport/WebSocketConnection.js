@@ -1,6 +1,6 @@
 const WebSocket = require('x-platform-ws');
 
-const { CascadeConnection } = require('../connection');
+const { CascadeConnection } = require('../util/connection');
 
 class WebSocketConnection extends CascadeConnection {
     constructor(...args) {

@@ -1,7 +1,7 @@
 const { defaultsDeep } = require('lodash');
 const log = require('debug')('bilibili-danmaku-client/ApplicationConnection');
 
-const { CascadeConnection } = require('../connection');
+const { CascadeConnection } = require('../util/connection');
 const DataConnection = require('../transport');
 const { registry } = require('./definitions');
 

@@ -17,8 +17,8 @@
 const { fromPairs } = require('lodash');
 
 const Transformer = require('./Transformer');
-const compile = require('./compile');
-const { asFlag, onWhen, on, onExist, spread, spreadObj } = require('./helpers');
+const compile = require('../util/compile');
+const { asFlag, onWhen, on, onExist, spread, spreadObj } = require('../util/helpers');
 
 // live start & end
 const liveEnd = new Transformer('PREPARING', 'liveEnd', spreadObj(['roomid', parseInt, 'roomId']));
