@@ -1,3 +1,3 @@
-const DataConnection = import('./DataConnection');
+const DataConnection = require('./DataConnection');
 
 module.exports = DataConnection;
