@@ -1,3 +1,5 @@
+const log = require('debug')('bilibili-danmaku-client/DataConnection');
+
 const { CascadeConnection } = require('../connection');
 const { SectionConnection, Section, SectionCoder, StringCoder, JsonCoder } = require('./SectionConnection');
 
@@ -19,9 +21,15 @@ class DataConnection extends CascadeConnection {
     }
 
     setupLifecycle(handshakeJson, timeout) {
-        this.parent.on('open', () => this.send(new Section(handshakeCoder, handshakeJson)));
+        this.parent.on('open', () => {
+            log('Sending heartbeat section...');
+            this.send(new Section(handshakeCoder, handshakeJson));
+        });
         setTimeout(() => {
-            if (this.state === 'opening') this.onError('Handshake timed out.');
+            if (this.state === 'opening') {
+                log('Handshake timed out, closing connection...');
+                this.onClose();
+            }
         }, timeout);
     }
 
@@ -35,7 +43,10 @@ class DataConnection extends CascadeConnection {
     processSection(section) {
         switch (this.state) {
         case 'opening':
-            if (handshakeAckCoder.hasConstructed(section)) this.onOpen();
+            if (handshakeAckCoder.hasConstructed(section)) {
+                log('Handshake ACK received, handshake successful.');
+                this.onOpen();
+            }
             break; // ignore other sections
         case 'opened':
             if (dataCoder.hasConstructed(section)) this.onMessage(section);
