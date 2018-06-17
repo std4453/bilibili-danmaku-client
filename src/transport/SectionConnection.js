@@ -1,11 +1,11 @@
-const Buffer = require('buffer');
+const { Buffer } = require('buffer');
 const log = require('debug')('bilibili-danmaku-client/SectionConnection');
 const { isEqual } = require('lodash');
 
 const { CascadeConnection } = require('../connection');
 const WebSocketConnection = require('./WebSocketConnection');
 
-const protoVer = 2;
+const protoVer = 0x10;
 const encoding = 'utf8';
 
 class Section {
@@ -56,10 +56,10 @@ class SectionConnection extends CascadeConnection {
             const header = Buffer.alloc(16);
             header.writeInt32BE(content.length + 16, 0);
             header.writeInt16BE(protoVer, 4);
-            header[7] = header.controlFlag ? 0x01 : 0x00;
-            header.writeInt16BE(header.opCode, 8);
-            header[15] = header.binaryFlag ? 0x01 : 0x00;
-            return Buffer.concat(header, content);
+            header[7] = coder.header.controlFlag ? 0x01 : 0x00;
+            header.writeInt32BE(coder.header.opCode, 8);
+            header[15] = coder.header.binaryFlag ? 0x01 : 0x00;
+            return Buffer.concat([header, content]);
         } catch (e) {
             log(`Unable to encode section: section=${section}, error=${e}.`);
             return Buffer.alloc(0);
@@ -87,7 +87,7 @@ class SectionConnection extends CascadeConnection {
         }
         const sectionHeader = {
             controlFlag: buf[offset + 7] === 0x01,
-            opCode: buf.readInt16BE(offset + 8),
+            opCode: buf.readInt32BE(offset + 8),
             binaryFlag: buf[offset + 15] === 0x01,
         };
         for (const coder of this.coders) {

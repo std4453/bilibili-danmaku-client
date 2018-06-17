@@ -22,8 +22,8 @@ class DataConnection extends CascadeConnection {
 
     setupLifecycle(handshakeJson, timeout) {
         this.parent.on('open', () => {
-            log('Sending heartbeat section...');
-            this.send(new Section(handshakeCoder, handshakeJson));
+            log('Sending handshake...');
+            this.parent.send([new Section(handshakeCoder, handshakeJson)]);
         });
         setTimeout(() => {
             if (this.state === 'opening') {
@@ -35,8 +35,14 @@ class DataConnection extends CascadeConnection {
 
     setupHeartbeat(interval) {
         let heartbeat;
-        const sendHeartbeat = () => this.send(new Section(heartbeatCoder, '[object Object]'));
-        this.on('open', () => { heartbeat = setInterval(sendHeartbeat, interval); });
+        const sendHeartbeat = () => {
+            log('Sending heartbeat...');
+            this.parent.send([new Section(heartbeatCoder, '[object Object]')]);
+        };
+        this.on('open', () => setTimeout(() => {
+            sendHeartbeat();
+            heartbeat = setInterval(sendHeartbeat, interval);
+        }, 1000));
         this.on('close', () => clearInterval(heartbeat));
     }
 
@@ -49,7 +55,8 @@ class DataConnection extends CascadeConnection {
             }
             break; // ignore other sections
         case 'opened':
-            if (dataCoder.hasConstructed(section)) this.onMessage(section);
+            if (dataCoder.hasConstructed(section)) this.onMessage(section.data);
+            if (heartbeatAckCoder.hasConstructed(section)) log('Heartbeat ACK received.');
             break; // ignore other sections
         default:
         }

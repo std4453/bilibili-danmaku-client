@@ -13,7 +13,7 @@ const getHandshake = room => ({
     uid: 0,
     roomid: room,
 });
-const defaultOptions = { section: { rejectUnauthorized: false } };
+const defaultOptions = { section: { options: { rejectUnauthorized: false } } };
 
 class ApplicationConnection extends CascadeConnection {
     constructor(room, options = {}) {
@@ -31,10 +31,10 @@ class ApplicationConnection extends CascadeConnection {
         }
         if (json.cmd in registry) {
             try {
-                const event = registry[json.cmd](json);
+                const event = registry[json.cmd].transform(json);
                 return event;
             } catch (e) {
-                log('Unable to transform event:');
+                log(`Unable to transform event: ${e}`);
                 log(json);
                 return undefined;
             }
