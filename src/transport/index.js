@@ -44,7 +44,11 @@ class DataConnection extends CascadeConnection {
         const { section, timeout = 5000, heartbeat = 30000 } = options;
         super(new SectionConnection(coders, url, section), { open: false, message: false });
 
-        this.parent.on('message', sections => sections.forEach(this.processSection.bind(this)));
+        this.parent.on('message', sections => sections.forEach(s => this.emit('section', s)));
+        this.on('section', (s) => {
+            if (this.state === 'opened' && dataCoder.hasConstructed(s)) this.onMessage(s.data);
+        });
+
         this.setupHandshake(handshakeJson, timeout);
         this.setupHeartbeat(heartbeat);
     }
@@ -68,6 +72,12 @@ class DataConnection extends CascadeConnection {
                 this.onClose();
             }
         }, timeout);
+        this.on('section', (section) => {
+            if (this.state === 'opening' && handshakeAckCoder.hasConstructed(section)) {
+                log('Handshake ACK received, handshake successful.');
+                this.onOpen();
+            }
+        });
     }
 
     /**
@@ -88,22 +98,11 @@ class DataConnection extends CascadeConnection {
             heartbeat = setInterval(sendHeartbeat, interval);
         });
         this.on('close', () => clearInterval(heartbeat));
-    }
-
-    processSection(section) {
-        switch (this.state) {
-        case 'opening':
-            if (handshakeAckCoder.hasConstructed(section)) {
-                log('Handshake ACK received, handshake successful.');
-                this.onOpen();
+        this.on('section', (section) => {
+            if (this.state === 'opened' && heartbeatAckCoder.hasConstructed(section)) {
+                log('Heartbeat ACK received.');
             }
-            break; // ignore other sections
-        case 'opened':
-            if (dataCoder.hasConstructed(section)) this.onMessage(section.data);
-            if (heartbeatAckCoder.hasConstructed(section)) log('Heartbeat ACK received.');
-            break; // ignore other sections
-        default:
-        }
+        });
     }
 
     transform(json) { return [new Section(dataCoder, json)]; } // SectionConnection sends Section[]
