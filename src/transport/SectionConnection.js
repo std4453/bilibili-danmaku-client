@@ -182,43 +182,46 @@ class SectionConnection extends CascadeConnection {
         }
     }
 
-    decodeSection(sections, buf, offset) {
-        if (buf.length < offset + 16) {
-            log(`Unable to read section header: offset=${offset}, length=${buf.length}.`);
-            return buf.length; // finish detransformation
-        }
-        const sectionLen = buf.readInt32BE(offset); // sectionLen = CONTENT length + 16
-        if (sectionLen < 16) {
-            log(`Invalid section length: ${sectionLen}.`);
-            return buf.length; // critical error, stop detransformation
-        }
-        if (sectionLen + offset > buf.length) {
-            log(`Section too long: end=${sectionLen + offset}, length=${buf.length}.`);
-            return buf.length; // critical error, stop detransformation
-        }
+    decodeHeader(buf, offset) {
+        if (buf.length < offset + 16) throw new Error(`Buffer too short: offset=${offset}, length=${buf.length}.`);
+        const length = buf.readInt32BE(offset); // length = CONTENT length + 16
+        if (length < 16) throw new Error(`Invalid section length: ${length}.`);
+        if (length + offset > buf.length) throw new Error(`Section too long: end=${length + offset}, length=${buf.length}.`);
         const sectionProtoVer = buf.readInt16BE(offset + 4);
-        if (sectionProtoVer !== protoVer) {
-            log(`Invalid section header: protoVer=${sectionProtoVer}, expected=${protoVer}.`);
-            return offset + sectionLen; // skip this section
-        }
-        const sectionHeader = {
-            controlFlag: buf[offset + 7] === 0x01,
-            opCode: buf.readInt32BE(offset + 8),
-            binaryFlag: buf[offset + 15] === 0x01,
+        if (sectionProtoVer !== protoVer) throw new Error(`Invalid section header: protoVer=${sectionProtoVer}, expected=${protoVer}.`);
+        return {
+            length,
+            header: {
+                controlFlag: buf[offset + 7] === 0x01,
+                opCode: buf.readInt32BE(offset + 8),
+                binaryFlag: buf[offset + 15] === 0x01,
+            },
         };
-        for (const coder of this.coders) {
-            if (isEqual(coder.header, sectionHeader)) {
-                const contentBuf = buf.slice(offset + 16, offset + sectionLen);
-                try {
-                    sections.push(coder.construct(contentBuf));
-                } catch (e) {
-                    log(`Unable to decode section: content=${contentBuf}, coder=${coder}.`);
-                }
-                return offset + sectionLen; // proceed to next section & break loop
-            }
+    }
+
+    decodeSection(sections, buf, offset) {
+        let header;
+        let length;
+        try {
+            ({ header, length } = this.decodeHeader(buf, offset));
+        } catch (e) {
+            log('Unable to decoder header: %s', e);
+            return buf.length; // stop debundling process
         }
-        log(`No matching section found: header=${sectionHeader}.`);
-        return offset + sectionLen; // skip this section
+
+        const coder = this.coders.find(c => isEqual(c.header, header));
+        if (typeof coder === 'undefined') {
+            log('No matching coder found: header=%s.', header);
+            return offset + length; // skip this section
+        }
+
+        const content = buf.slice(offset + 16, offset + length);
+        try {
+            sections.push(coder.construct(content));
+        } catch (e) {
+            log('Unable to decode section: content=%s, coder=%s.', content, coder);
+        }
+        return offset + length; // proceed to next section
     }
 }
 
