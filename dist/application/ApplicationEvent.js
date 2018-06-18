@@ -1,0 +1,32 @@
+"use strict";
+
+/**
+ * This file contains the class definition of ApplicationEvent.
+ * For details, see documentation of ApplicationEvent.
+ */
+
+/**
+ * An ApplicationEvent represents an Application Event.
+ * An Application Event, as defined in Wiki page 'Application Protocol',
+ * contain an meaningful event name and an arbitrary additional content.
+ * The event name is related to a specific format of the content, which
+ * can be found in the Wiki page 'Events'.
+ * Applications should use the event name to distinguish between
+ * different types of events, operating opon the additional data to do
+ * their job.
+ * The ApplicationEvent class is a simple representation of the
+ * Application Event, using a class to provide a more structured definition.
+ */
+var ApplicationEvent =
+/**
+ * Construct a new ApplicationEvent using the parameters.
+ * @param {string} name The name of the Event.
+ * @param {Object} content The content of the Event.
+ */
+function ApplicationEvent(name, content) {
+  this.name = name;
+  this.content = content;
+};
+
+module.exports = ApplicationEvent;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9hcHBsaWNhdGlvbi9BcHBsaWNhdGlvbkV2ZW50LmpzIl0sIm5hbWVzIjpbIkFwcGxpY2F0aW9uRXZlbnQiLCJuYW1lIiwiY29udGVudCIsIm1vZHVsZSIsImV4cG9ydHMiXSwibWFwcGluZ3MiOiI7O0FBQUE7Ozs7O0FBS0E7Ozs7Ozs7Ozs7OztJQVlNQSxnQjtBQUNGOzs7OztBQUtBLDBCQUFZQyxJQUFaLEVBQWtCQyxPQUFsQixFQUEyQjtBQUN2QixPQUFLRCxJQUFMLEdBQVlBLElBQVo7QUFDQSxPQUFLQyxPQUFMLEdBQWVBLE9BQWY7QUFDSCxDOztBQUdMQyxPQUFPQyxPQUFQLEdBQWlCSixnQkFBakIiLCJzb3VyY2VzQ29udGVudCI6WyIvKipcclxuICogVGhpcyBmaWxlIGNvbnRhaW5zIHRoZSBjbGFzcyBkZWZpbml0aW9uIG9mIEFwcGxpY2F0aW9uRXZlbnQuXHJcbiAqIEZvciBkZXRhaWxzLCBzZWUgZG9jdW1lbnRhdGlvbiBvZiBBcHBsaWNhdGlvbkV2ZW50LlxyXG4gKi9cclxuXHJcbi8qKlxyXG4gKiBBbiBBcHBsaWNhdGlvbkV2ZW50IHJlcHJlc2VudHMgYW4gQXBwbGljYXRpb24gRXZlbnQuXHJcbiAqIEFuIEFwcGxpY2F0aW9uIEV2ZW50LCBhcyBkZWZpbmVkIGluIFdpa2kgcGFnZSAnQXBwbGljYXRpb24gUHJvdG9jb2wnLFxyXG4gKiBjb250YWluIGFuIG1lYW5pbmdmdWwgZXZlbnQgbmFtZSBhbmQgYW4gYXJiaXRyYXJ5IGFkZGl0aW9uYWwgY29udGVudC5cclxuICogVGhlIGV2ZW50IG5hbWUgaXMgcmVsYXRlZCB0byBhIHNwZWNpZmljIGZvcm1hdCBvZiB0aGUgY29udGVudCwgd2hpY2hcclxuICogY2FuIGJlIGZvdW5kIGluIHRoZSBXaWtpIHBhZ2UgJ0V2ZW50cycuXHJcbiAqIEFwcGxpY2F0aW9ucyBzaG91bGQgdXNlIHRoZSBldmVudCBuYW1lIHRvIGRpc3Rpbmd1aXNoIGJldHdlZW5cclxuICogZGlmZmVyZW50IHR5cGVzIG9mIGV2ZW50cywgb3BlcmF0aW5nIG9wb24gdGhlIGFkZGl0aW9uYWwgZGF0YSB0byBkb1xyXG4gKiB0aGVpciBqb2IuXHJcbiAqIFRoZSBBcHBsaWNhdGlvbkV2ZW50IGNsYXNzIGlzIGEgc2ltcGxlIHJlcHJlc2VudGF0aW9uIG9mIHRoZVxyXG4gKiBBcHBsaWNhdGlvbiBFdmVudCwgdXNpbmcgYSBjbGFzcyB0byBwcm92aWRlIGEgbW9yZSBzdHJ1Y3R1cmVkIGRlZmluaXRpb24uXHJcbiAqL1xyXG5jbGFzcyBBcHBsaWNhdGlvbkV2ZW50IHtcclxuICAgIC8qKlxyXG4gICAgICogQ29uc3RydWN0IGEgbmV3IEFwcGxpY2F0aW9uRXZlbnQgdXNpbmcgdGhlIHBhcmFtZXRlcnMuXHJcbiAgICAgKiBAcGFyYW0ge3N0cmluZ30gbmFtZSBUaGUgbmFtZSBvZiB0aGUgRXZlbnQuXHJcbiAgICAgKiBAcGFyYW0ge09iamVjdH0gY29udGVudCBUaGUgY29udGVudCBvZiB0aGUgRXZlbnQuXHJcbiAgICAgKi9cclxuICAgIGNvbnN0cnVjdG9yKG5hbWUsIGNvbnRlbnQpIHtcclxuICAgICAgICB0aGlzLm5hbWUgPSBuYW1lO1xyXG4gICAgICAgIHRoaXMuY29udGVudCA9IGNvbnRlbnQ7XHJcbiAgICB9XHJcbn1cclxuXHJcbm1vZHVsZS5leHBvcnRzID0gQXBwbGljYXRpb25FdmVudDtcclxuIl19
