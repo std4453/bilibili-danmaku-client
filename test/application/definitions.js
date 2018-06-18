@@ -433,4 +433,82 @@ describe('definitions', () => {
 
         test(inputTemplate, outputTemplate, {});
     });
+
+    it('should transform LIVE correctly', () => {
+        const inputTemplate = {
+            cmd: 'LIVE',
+            roomid: '1234',
+        };
+        const outputTemplate = {
+            roomId: 1234,
+        };
+
+        test(inputTemplate, outputTemplate, {});
+    });
+
+    it('should transform PREPARING correctly', () => {
+        const inputTemplate = {
+            cmd: 'PREPARING',
+            roomid: '1234',
+        };
+        const outputTemplate = {
+            roomId: 1234,
+        };
+
+        test(inputTemplate, outputTemplate, {});
+    });
+
+    it('should transform ROOM_BLOCK_MSG correctly', () => {
+        const inputTemplate = {
+            cmd: 'ROOM_BLOCK_MSG',
+            roomid: 1234,
+            uid: '5678',
+            uname: 'Joe',
+        };
+        const outputTemplate = {
+            roomId: 1234,
+            blocked: {
+                uid: 5678,
+                name: 'Joe',
+            },
+        };
+
+        test(inputTemplate, outputTemplate, {});
+    });
+
+    it('should transform ROOM_SILENT_ON correctly', () => {
+        const inputTemplate = {
+            cmd: 'ROOM_SILENT_ON',
+            roomid: 1234,
+            data: mock => ({
+                type: mock.type,
+                second: 5678,
+                ...mock.params,
+            }),
+        };
+        const outputTemplate = mock => ({
+            roomId: 1234,
+            second: 5678,
+            type: mock.type,
+            ...mock.params,
+        });
+        const mockTemplate = chooseFrom({
+            type: 'level',
+            params: { level: 10 },
+        });
+
+        test(inputTemplate, outputTemplate, mockTemplate);
+    });
+
+    it('should transform ROOM_SILENT_OFF correctly', () => {
+        const inputTemplate = {
+            cmd: 'ROOM_SILENT_OFF',
+            roomid: '1234',
+        };
+        const outputTemplate = {
+            roomId: 1234,
+        };
+
+        test(inputTemplate, outputTemplate, {});
+    });
 });

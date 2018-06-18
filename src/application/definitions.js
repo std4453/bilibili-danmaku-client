@@ -102,13 +102,13 @@ const guardBuy = new Transformer('GUARD_BUY', 'guardBuy', {
 const blockUser = new Transformer('ROOM_BLOCK_MSG', 'blockUser', {
     roomId: m => m.roomid, blocked: spreadObj(['uid', parseInt], ['uname', 0, 'name']),
 });
-const silentOn = new Transformer('ROOM_SILENT_ON', 'silentOn', {
-    roomId: m => m.roomid,
-    ...on(m => m.data, {
-        ...spreadObj('type', 'second'),
-        ...onWhen(d => d, d => d.type === 'level', spreadObj('level')),
-    }),
-});
+const silentOn = new Transformer('ROOM_SILENT_ON', 'silentOn', msg => ({
+    roomId: msg.roomid,
+    ...on(m => m.data, data => ({
+        ...compile(spreadObj('type', 'second'))(data),
+        ...onWhen(d => d, d => d.type === 'level', spreadObj('level'))(data),
+    }))(msg),
+}));
 const silentOff = new Transformer('ROOM_SILENT_OFF', 'silentOff', spreadObj(['roomid', parseInt, 'roomId']));
 
 const transformers = [
