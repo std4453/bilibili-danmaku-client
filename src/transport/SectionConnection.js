@@ -10,6 +10,7 @@
  */
 
 const { Buffer } = require('buffer');
+const { inflateSync } = require('zlib');
 const log = require('debug')('bilibili-danmaku-client/SectionConnection');
 const { isEqual } = require('lodash');
 
@@ -191,6 +192,7 @@ class SectionConnection extends CascadeConnection {
         if (sectionProtoVer !== protoVer) throw new Error(`Invalid section header: protoVer=${sectionProtoVer}, expected=${protoVer}.`);
         return {
             length,
+            version: buf.readInt16BE(offset + 6),
             header: {
                 controlFlag: buf[offset + 7] === 0x01,
                 opCode: buf.readInt32BE(offset + 8),
@@ -200,10 +202,9 @@ class SectionConnection extends CascadeConnection {
     }
 
     decodeSection(sections, buf, offset) {
-        let header;
-        let length;
+        let header, length, version;
         try {
-            ({ header, length } = this.decodeHeader(buf, offset));
+            ({ header, length, version } = this.decodeHeader(buf, offset));
         } catch (e) {
             log('Unable to decoder header: %s', e);
             return buf.length; // stop debundling process
@@ -216,10 +217,17 @@ class SectionConnection extends CascadeConnection {
         }
 
         const content = buf.slice(offset + 16, offset + length);
-        try {
-            sections.push(coder.construct(content));
-        } catch (e) {
-            log('Unable to decode section: content=%s, coder=%s.', content, coder);
+        switch (version) {
+            case 2:
+                this.decodeSection(sections, inflateSync(content), 0);
+                break;
+            default:
+                try {
+                    sections.push(coder.construct(content));
+                } catch (e) {
+                    log('Unable to decode section: content=%s, coder=%s.', content, coder);
+                }
+                break;
         }
         return offset + length; // proceed to next section
     }
