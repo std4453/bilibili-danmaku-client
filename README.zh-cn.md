@@ -50,7 +50,7 @@ _本文档在不同语言下有多种版本：[English](README.md)，[简体中�
     $ npm install --save bilibili-danmaku-client
 ```
 
-（脸红）别问那么多为什么了！跟着做就是了！行不行本小姐把你电成烤猪肉！如果蹦出来什么`peer dependencies not installed`之类的，不要管他就是了！知道了吗！
+（脸红）别问那么多为什么了！跟着做就是了！信不信本小姐把你电成烤猪肉！如果蹦出来什么`peer dependencies not installed`之类的，不要管他就是了！知道了吗！
 
 其实[下面](#在浏览器中使用)写了怎么解决这个问题的，可不是我想要告诉你的哦！还不是看你只身一人怪可怜的……
 
